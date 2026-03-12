@@ -65,7 +65,7 @@
                         <h4>{{ $content }}</h4>
                         <div class="card-header-action">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalTambahPenjualan" wire:click="resetInput">
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalTambahPenjualan" wire:click="resetInput">
                                     <i class="fas fa-plus-circle mr-1"></i> Transaksi
                                 </button>
                                 <a href="" class="btn btn-success">

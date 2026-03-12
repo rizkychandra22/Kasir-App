@@ -7,6 +7,7 @@ use App\Livewire\Dashboard\Kasir;
 use App\Livewire\Kasir\DataCategory;
 use App\Livewire\Kasir\DataProduct;
 use App\Livewire\Kasir\DataShopping;
+use App\Livewire\Kasir\PreviewPrintProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,7 @@ Route::middleware(['RoleUser:Admin'])->prefix('dashboard')->group(function () {
 Route::middleware(['RoleUser:Kasir'])->prefix('dashboard')->group(function () {
     Route::get('/kasir', Kasir::class)->name('kasir.dashboard');
     Route::get('/kasir/product', DataProduct::class)->name('kasir.product');
+    Route::get('/kasir/product/export', PreviewPrintProduct::class)->name('kasir.product.export');
     Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
     Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
 });

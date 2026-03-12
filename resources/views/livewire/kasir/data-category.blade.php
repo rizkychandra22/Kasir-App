@@ -33,11 +33,11 @@
                                 <a href="{{ route('kasir.category') }}" class="btn btn-danger">
                                     <i class="fas fa-plus-circle mr-1"></i> Category
                                 </a>
-                                <a href="{{ route('kasir.product') }}" class="btn btn-primary">
+                                <a href="{{ route('kasir.product') }}" class="btn btn-warning">
                                     <i class="fas fa-arrow-left mr-1"></i> Produk
                                 </a>
                                 <a href="" class="btn btn-success">
-                                    <i class="fas fa-print mr-1"></i> Cetak
+                                    <i class="fas fa-file-export mr-1"></i> Export
                                 </a>
                             </div>
                         </div>
