@@ -12,7 +12,7 @@ class PreviewPrintProduct extends Component
     public $subpage = 'Overview Kasir';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Export Data';
+    public $content = 'Export Data Produk';
 
     public function mount()
     {

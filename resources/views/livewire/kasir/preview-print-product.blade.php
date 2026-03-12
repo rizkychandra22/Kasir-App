@@ -15,9 +15,9 @@
                                 <a href="" class="btn btn-success">
                                     <i class="fas fa-file-excel mr-1"></i> Excel
                                 </a>
-                                <button type="button" class="btn btn-info" onclick="window.print()">
+                                <a href="" class="btn btn-info">
                                     <i class="fas fa-print mr-1"></i> Print
-                                </button>
+                                </a>
                                 <a href="" class="btn btn-danger">
                                     <i class="fas fa-file-pdf mr-1"></i> PDF
                                 </a>
@@ -28,13 +28,12 @@
                     <div class="card-body">
                         <div class="table-responsive" wire:poll.5s>
                             <table class="table table-bordered table-hover">
-                                <thead class="thead-light text-center">
+                                <thead class="thead-light">
                                     <tr>
                                         <th width="50">#</th>
                                         <th>Kategori</th>
                                         <th>Produk</th>
                                         <th>Kode</th>
-                                        <th>Deskripsi</th>
                                         <th>Harga</th>
                                         <th>Stok</th>
                                     </tr>
@@ -46,7 +45,6 @@
                                             <td>{{ $product->category->name }}</td>
                                             <td>{{ $product->name_prd }}</td>
                                             <td class="font-weight-bold">{{ $product->code_prd }}</td>
-                                            <td>{{ trim($product->description_prd ?? '') !== '' ? $product->description_prd : '—' }}</td>
                                             <td class="font-weight-bold">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
                                             <td class="font-weight-bold">{{ $product->stock }}</td>
                                         </tr>
