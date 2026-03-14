@@ -23,8 +23,7 @@ class PreviewPrintProduct extends Component
     public function render()
     {
         return view('livewire.kasir.preview-print-product', [
-            'products' => Product::with('user', 'category')->latest()->get(),
-            'categories' => Category::with('user')->latest()->get(),
+            'products' => Product::with('category')->latest()->get()
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,
             'content' => $this->content,

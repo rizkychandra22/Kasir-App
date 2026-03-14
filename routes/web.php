@@ -1,6 +1,10 @@
 <?php
 
-use App\Http\Controllers\Kasir\PrintController;
+// Import Class Controller
+
+use App\Http\Controllers\Export\PdfController;
+
+// Import Class Livewire
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard\Admin;
 use App\Livewire\Dashboard\Kasir;
@@ -8,6 +12,8 @@ use App\Livewire\Kasir\DataCategory;
 use App\Livewire\Kasir\DataProduct;
 use App\Livewire\Kasir\DataShopping;
 use App\Livewire\Kasir\PreviewPrintProduct;
+
+// Import Class Global
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -46,5 +52,8 @@ Route::middleware(['RoleUser:Kasir'])->prefix('dashboard')->group(function () {
     Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
 });
 
-// Route Download Struk PDF
-Route::get('/download/pdf/struck/shopping/{id}', [PrintController::class, 'struckShopping'])->name('struck.shopping.pdf');
+// Route Download PDF & Excel
+Route::get('/download/pdf/struck/shopping/{id}', [PdfController::class, 'struckShopping'])->name('struck.shopping.pdf');
+Route::get('/download/pdf/data-product', [PdfController::class, 'dataProduct'])->name('data.product.pdf');
+Route::get('/print/data-product', [PdfController::class, 'printDataProduct'])->name('data.product.print');
+Route::get('/download/excel/data-product', [PdfController::class, 'dataProductExcel'])->name('data.product.excel');

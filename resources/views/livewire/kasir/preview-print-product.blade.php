@@ -12,13 +12,13 @@
                         <h4>{{ $content }}</h4>
                         <div class="card-header-action">
                             <div class="btn-group">
-                                <a href="" class="btn btn-success">
+                                <a href="{{ route('data.product.excel') }}" target="_blank" class="btn btn-success">
                                     <i class="fas fa-file-excel mr-1"></i> Excel
                                 </a>
-                                <a href="" class="btn btn-info">
+                                <a href="{{ route('data.product.print') }}" target="_blank" class="btn btn-info">
                                     <i class="fas fa-print mr-1"></i> Print
                                 </a>
-                                <a href="" class="btn btn-danger">
+                                <a href="{{ route('data.product.pdf') }}" target="_blank" class="btn btn-danger">
                                     <i class="fas fa-file-pdf mr-1"></i> PDF
                                 </a>
                             </div>
