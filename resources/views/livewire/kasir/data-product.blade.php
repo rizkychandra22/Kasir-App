@@ -33,11 +33,11 @@
                                 <a href="{{ route('kasir.category') }}" class="btn btn-danger">
                                     <i class="fas fa-plus-circle mr-1"></i> Category
                                 </a>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalProduk" wire:click="resetInput">
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalProduk" wire:click="resetInput">
                                     <i class="fas fa-plus-circle mr-1"></i> Produk
                                 </button>
-                                <a href="" class="btn btn-success">
-                                    <i class="fas fa-print mr-1"></i> Cetak
+                                <a href="{{ route('kasir.product.export') }}" class="btn btn-success" rel="noopener noreferrer">
+                                    <i class="fas fa-file-export mr-1"></i> Export
                                 </a>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                                         <th>Deskripsi</th>
                                         <th width="120">Harga</th>
                                         <th>Stok</th>
-                                        <th width="110">Aksi</th>
+                                        <th width="115">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -66,7 +66,7 @@
                                             <td><code class="font-weight-bold">{{ $product->user->name }}</code></td>
                                             <td>{{ $product->category->name }}</td>
                                             <td>{{ $product->name_prd }}</td>
-                                            <td><span class="badge badge-success">{{ $product->code_prd }}</span></td>
+                                            <td><span class="badge badge-warning">{{ $product->code_prd }}</span></td>
                                             <td>{{ trim($product->description_prd ?? '') !== '' ? $product->description_prd : '—' }}</td>
                                             <td class="font-weight-bold">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
                                             <td>
@@ -75,7 +75,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-warning mt-1 mb-1" wire:click="edit({{ $product->id }})" data-toggle="modal" data-target="#modalProduk">
+                                                <button class="btn btn-sm btn-outline-warning mt-1 mb-1 mr-1" wire:click="edit({{ $product->id }})" data-toggle="modal" data-target="#modalProduk">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-outline-danger mt-1 mb-1" wire:click="delete({{ $product->id }})" wire:confirm="Hapus produk {{ $product->name_prd }}?">

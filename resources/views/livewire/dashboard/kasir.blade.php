@@ -31,9 +31,42 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="statistic-details mt-sm-4">
-                            <div class="statistic-details-item">
-                                
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card card-warning h-100 mb-0">
+                                    <div class="card-body d-flex flex-column justify-content-between">
+                                        <strong class="text-dark mb-1">Total Kategori</strong>
+                                        <h4 class="mb-1">{{ $countCategory }}</h4>
+                                        <p class="text">Kategori produk aktif</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="card card-info h-100 mb-0">
+                                    <div class="card-body d-flex flex-column justify-content-between">
+                                        <strong class="text-dark mb-1">Produk Tersedia</strong>
+                                        <h4 class="mb-1">{{ $countProductReady }}</h4>
+                                        <p class="text">Total stok: {{ number_format($totalStockReady, 0, ',', '.') }} item</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3 mt-3 mt-lg-0">
+                                <div class="card card-success h-100 mb-0">
+                                    <div class="card-body d-flex flex-column justify-content-between">
+                                        <strong class="text-dark mb-1">Produk Terjual</strong>
+                                        <h4 class="mb-1">{{ number_format($countProductSold, 0, ',', '.') }}</h4>
+                                        <p class="text">Periode {{ $currentMonth }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3 mt-3 mt-lg-0">
+                                <div class="card card-danger h-100 mb-0">
+                                    <div class="card-body d-flex flex-column justify-content-between">
+                                        <strong class="text-dark mb-1">Pendapatan</strong>
+                                        <h4 class="mb-1">Rp{{ number_format($countRevenue, 0, ',', '.') }}</h4>
+                                        <p class="text">Periode {{ $currentMonth }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
