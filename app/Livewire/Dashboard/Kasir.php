@@ -31,6 +31,8 @@ class Kasir extends Component
             'totalStockReady' => Product::where('stock', '>', 0)->sum('stock'),
             'countProductSold' => ShoppingDetail::whereBetween('created_at', [$startOfMonth, $endOfMonth])->sum('qty'),
             'countRevenue' => Shopping::whereBetween('created_at', [$startOfMonth, $endOfMonth])->sum('total_price'),
+            'revenueOffline' => Shopping::whereBetween('created_at', [$startOfMonth, $endOfMonth])->where(function($q) { $q->where('sales_type', 'offline')->orWhereNull('sales_type'); })->sum('total_price'),
+            'revenueOnline' => Shopping::whereBetween('created_at', [$startOfMonth, $endOfMonth])->where('sales_type', 'online')->sum('total_price'),
             'currentMonth' => Carbon::now()->locale('id')->translatedFormat('F Y'),
         ])->layout('layouts.app', [
             'subpage' => 'Dashboard',    

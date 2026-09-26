@@ -57,6 +57,7 @@
         <div class="dash"></div>
         <h5 class="invoice-title font-weight-bold">STRUK PEMBELIAN</h5>
         <div class="badge">{{ $data->invoice }}</div>
+        <div style="font-size: 10px; margin-top: 3px; font-weight: bold;">[PENJUALAN {{ strtoupper($data->sales_type ?? 'OFFLINE') }}]</div>
     </div>
 
     <table class="info-table">

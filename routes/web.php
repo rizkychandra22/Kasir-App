@@ -8,6 +8,7 @@ use App\Http\Controllers\Export\PdfController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard\Admin;
 use App\Livewire\Dashboard\Kasir;
+use App\Livewire\Kasir\DataBahan;
 use App\Livewire\Kasir\DataCategory;
 use App\Livewire\Kasir\DataProduct;
 use App\Livewire\Kasir\DataShopping;
@@ -49,6 +50,7 @@ Route::middleware(['RoleUser:Kasir'])->prefix('dashboard')->group(function () {
     Route::get('/kasir/product', DataProduct::class)->name('kasir.product');
     Route::get('/kasir/product/export', PreviewPrintProduct::class)->name('kasir.product.export');
     Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
+    Route::get('/kasir/bahan', DataBahan::class)->name('kasir.bahan');
     Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
 });
 

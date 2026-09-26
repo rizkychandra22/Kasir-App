@@ -63,13 +63,13 @@
                             <li class="menu-header">Dashboard {{ Auth::user()->role }}</li>
                             @if (Auth::user()->isAdmin())
                                 <li @class(['active' => request()->routeIs('admin.dashboard')])>
-                                    <a href="{{ route('admin.dashboard') }}" wire:navigate class="nav-link">
+                                    <a href="{{ route('admin.dashboard') }}" class="nav-link">
                                         <i class="fas fa-home"></i> <span>Dashboard</span>
                                     </a>
                                 </li>
                             @else
                                 <li class="{{ Route::is('kasir.dashboard') ? 'active' : '' }}">
-                                    <a href="{{ route('kasir.dashboard') }}" wire:navigate class="nav-link">
+                                    <a href="{{ route('kasir.dashboard') }}" class="nav-link">
                                         <i class="fas fa-home"></i> <span>Dashboard</span>
                                     </a>
                                 </li>
@@ -77,12 +77,17 @@
                             <li class="menu-header">Menu Utama {{ Auth::user()->role }}</li>
                             @if((Auth::user()->isKasir()))
                                 <li class="{{ Route::is(['kasir.product', 'kasir.category']) ? 'active' : '' }}">
-                                    <a href="{{ route('kasir.product') }}" wire:navigate class="nav-link">
+                                    <a href="{{ route('kasir.product') }}" class="nav-link">
                                         <i class="fas fa-cubes"></i> <span>Data Produk</span>
                                     </a>
                                 </li>
+                                <li class="{{ Route::is('kasir.bahan') ? 'active' : '' }}">
+                                    <a href="{{ route('kasir.bahan') }}" class="nav-link">
+                                        <i class="fas fa-seedling"></i> <span>Data Master Bahan</span>
+                                    </a>
+                                </li>
                                 <li class="{{ Route::is('kasir.shopping') ? 'active' : '' }}">
-                                    <a href="{{ route('kasir.shopping') }}" wire:navigate class="nav-link">
+                                    <a href="{{ route('kasir.shopping') }}" class="nav-link">
                                         <i class="fas fa-money-bill-wave"></i> <span>Data Penjualan</span>
                                     </a>
                                 </li>
@@ -122,10 +127,36 @@
         @stack('scripts')
 
         <script>
-            document.addEventListener('livewire:navigated', () => {
-                if (typeof $.ready === 'function') {
+            function forceCleanModals() {
+                try {
+                    $('.modal').modal('hide');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('padding-right', '');
+                } catch (e) {}
+            }
 
-                }
+            document.addEventListener('livewire:navigating', () => {
+                forceCleanModals();
+            });
+
+            document.addEventListener('livewire:navigated', () => {
+                forceCleanModals();
+            });
+
+            window.addEventListener('close-modal', event => {
+                $('.modal').modal('hide');
+                setTimeout(() => {
+                    forceCleanModals();
+                }, 300);
+            });
+
+            $(document).ready(function() {
+                $(document).on('hidden.bs.modal', '.modal', function () {
+                    if ($('.modal.show').length === 0) {
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open').css('padding-right', '');
+                    }
+                });
             });
         </script>
     </body>
