@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class DataProduct extends Component
 {
-    public $category_id, $name_prd, $code_prd, $description_prd, $price, $price_online, $price_offline, $stock;
+    public $category_id, $name_prd, $code_prd, $description_prd, $price, $price_online, $price_offline;
     public $sales_type = 'all'; // 'online', 'offline', 'all'
     public $productId; 
 
@@ -111,7 +111,6 @@ class DataProduct extends Component
         $this->price = '';
         $this->price_online = '';
         $this->price_offline = '';
-        $this->stock = '';
         $this->compositions = [];
         $this->resetValidation();
     }
@@ -123,7 +122,6 @@ class DataProduct extends Component
             'name_prd' => 'required|min:3',
             'code_prd' => 'required|unique:products,code_prd',
             'sales_type' => 'required|in:online,offline,all',
-            'stock' => 'required|numeric|min:0',
             'compositions' => 'nullable|array',
             'compositions.*.bahan_id' => 'required|exists:bahans,id',
             'compositions.*.quantity' => 'required|numeric|gt:0',
@@ -180,7 +178,6 @@ class DataProduct extends Component
             'price_online' => $this->price_online !== '' ? (int)$this->price_online : null,
             'price_offline' => $this->price_offline !== '' ? (int)$this->price_offline : null,
             'price' => $mainPrice,
-            'stock' => $this->stock,
         ]);
 
         if (!empty($pivotData)) {
@@ -204,7 +201,6 @@ class DataProduct extends Component
         $this->price_online = $product->price_online;
         $this->price_offline = $product->price_offline;
         $this->price = $product->price;
-        $this->stock = $product->stock;
 
         $this->compositions = [];
         foreach ($product->bahans as $b) {
@@ -222,7 +218,6 @@ class DataProduct extends Component
             'category_id' => 'required',
             'name_prd' => 'required|min:3',
             'sales_type' => 'required|in:online,offline,all',
-            'stock' => 'required|numeric|min:0',
             'compositions' => 'nullable|array',
             'compositions.*.bahan_id' => 'required|exists:bahans,id',
             'compositions.*.quantity' => 'required|numeric|gt:0',
@@ -279,7 +274,6 @@ class DataProduct extends Component
             'price_online' => $this->price_online !== '' ? (int)$this->price_online : null,
             'price_offline' => $this->price_offline !== '' ? (int)$this->price_offline : null,
             'price' => $mainPrice,
-            'stock' => $this->stock,
         ]);
 
         $product->bahans()->sync($pivotData);

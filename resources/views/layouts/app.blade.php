@@ -91,6 +91,27 @@
                                         <i class="fas fa-money-bill-wave"></i> <span>Data Penjualan</span>
                                     </a>
                                 </li>
+                                <li class="menu-header">Biaya & Target HPP</li>
+                                <li class="{{ Route::is('kasir.target-penjualan') ? 'active' : '' }}">
+                                    <a href="{{ route('kasir.target-penjualan') }}" class="nav-link">
+                                        <i class="fas fa-bullseye"></i> <span>Target Penjualan</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Route::is('kasir.labor') ? 'active' : '' }}">
+                                    <a href="{{ route('kasir.labor') }}" class="nav-link">
+                                        <i class="fas fa-users"></i> <span>Data Tenaga Kerja</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Route::is('kasir.overhead') ? 'active' : '' }}">
+                                    <a href="{{ route('kasir.overhead') }}" class="nav-link">
+                                        <i class="fas fa-file-invoice-dollar"></i> <span>Biaya Operasional</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Route::is('kasir.hpp-product') ? 'active' : '' }}">
+                                    <a href="{{ route('kasir.hpp-product') }}" class="nav-link">
+                                        <i class="fas fa-calculator"></i> <span>HPP & Margin Produk</span>
+                                    </a>
+                                </li>
                             @else
                                 
                             @endif

@@ -73,11 +73,10 @@
             <thead>
                 <tr>
                     <th class="text-center" style="width: 6%;">#</th>
-                    <th class="text-left" style="width: 22%;">Kategori</th>
-                    <th class="text-left" style="width: 32%;">Produk</th>
-                    <th class="text-center" style="width: 12%;">Kode</th>
-                    <th class="text-right" style="width: 14%;">Harga</th>
-                    <th class="text-center" style="width: 14%;">Stok</th>
+                    <th class="text-left" style="width: 26%;">Kategori</th>
+                    <th class="text-left" style="width: 38%;">Produk</th>
+                    <th class="text-center" style="width: 14%;">Kode</th>
+                    <th class="text-right" style="width: 16%;">Harga</th>
                 </tr>
             </thead>
             <tbody>
@@ -88,11 +87,10 @@
                         <td>{{ $product->name_prd }}</td>
                         <td class="text-center font-weight-bold">{{ $product->code_prd }}</td>
                         <td class="text-right font-weight-bold">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
-                        <td class="text-center font-weight-bold">{{ $product->stock }} pcs</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">Tidak ada data produk</td>
+                        <td colspan="5" class="text-center">Tidak ada data produk</td>
                     </tr>
                 @endforelse
             </tbody>

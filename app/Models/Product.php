@@ -16,7 +16,6 @@ class Product extends Model
         'price_online',
         'price_offline',
         'price',
-        'stock',
     ];
 
     public function user()
@@ -65,5 +64,73 @@ class Product extends Model
             return (int)$this->price_offline;
         }
         return (int)$this->price;
+    }
+
+    /**
+     * Calculate total recipe material cost (HPP Bahan) for 1 portion of this product
+     */
+    public function calculateTotalRecipeCost()
+    {
+        $totalCost = 0;
+        foreach ($this->bahans as $b) {
+            $recipeQtyInBaseUnit = (float)($b->pivot->quantity ?? 1);
+            $costPerBaseUnit = (float)$b->cost_per_base_unit;
+            $totalCost += ($recipeQtyInBaseUnit * $costPerBaseUnit);
+        }
+        return $totalCost;
+    }
+
+    /**
+     * Get detailed breakdown of recipe material costs
+     */
+    public function getRecipeCostDetails()
+    {
+        $details = [];
+        $total = 0;
+
+        foreach ($this->bahans as $b) {
+            $recipeQtyInBaseUnit = (float)($b->pivot->quantity ?? 1);
+            $recipeUnit = $b->pivot->unit ?? $b->base_unit;
+            $costPerBaseUnit = (float)$b->cost_per_base_unit;
+            $itemCost = $recipeQtyInBaseUnit * $costPerBaseUnit;
+            $total += $itemCost;
+
+            // Unit cost in recipe unit
+            $recipeUnitConversion = \App\Services\UnitConversionService::convertToBaseUnit(1, $recipeUnit)['amount'];
+            $costPerRecipeUnit = $recipeUnitConversion * $costPerBaseUnit;
+
+            $details[] = [
+                'bahan_id' => $b->id,
+                'name_bahan' => $b->name_bahan,
+                'quantity' => (float)($b->pivot->quantity ?? 1),
+                'unit' => $recipeUnit,
+                'base_unit' => $b->base_unit,
+                'cost_per_base_unit' => $costPerBaseUnit,
+                'cost_per_unit' => $costPerRecipeUnit,
+                'item_cost' => $itemCost,
+                'has_valid_price' => $b->hasValidPrice(),
+            ];
+        }
+
+        return [
+            'details' => $details,
+            'total_cost' => $total,
+        ];
+    }
+
+    /**
+     * Get complete HPP details including labor and overhead
+     */
+    public function getHppDetails()
+    {
+        return \App\Services\HppService::getProductHppDetails($this);
+    }
+
+    /**
+     * Calculate HPP Total for 1 cup/portion of this product
+     */
+    public function calculateHppTotal()
+    {
+        return $this->getHppDetails()['hpp_total'];
     }
 }

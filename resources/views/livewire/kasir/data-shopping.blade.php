@@ -191,9 +191,7 @@
                                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-left-0 border-right-0">
                                         <div>
                                             <div class="font-weight-bold text-primary">{{ $p->name_prd }}</div>
-                                            <small class="text-dark">{{ $p->code_prd }} | Stok:
-                                                <span class="{{ $p->stock <= 10 ? 'text-danger font-weight-bold' : '' }}">{{ $p->stock }}</span>
-                                            </small>
+                                            <small class="text-muted"><i class="fas fa-tag mr-1"></i>{{ $p->code_prd }}</small>
                                         </div>
                                         @if($sales_type === 'online' && !$hasPrice)
                                             <span class="badge badge-danger badge-pill">Belum ada harga</span>

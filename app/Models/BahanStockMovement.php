@@ -13,6 +13,8 @@ class BahanStockMovement extends Model
         'qty',
         'stock_before',
         'stock_after',
+        'cost_per_base_unit',
+        'total_cost',
         'reference',
         'notes',
     ];
