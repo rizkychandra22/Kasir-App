@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Export;
 
 use App\Exports\xlsReportProduct;
+use App\Exports\xlsReportShopping;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Shopping;
@@ -48,5 +49,31 @@ class PdfController extends Controller
     public function dataProductExcel()
     {
         return Excel::download(new xlsReportProduct(), 'Data-Produk.xlsx');
+    }
+
+    public function dataShopping()
+    {
+        $data = Shopping::with(['user', 'details.product'])->latest()->get();
+        $pdf = Pdf::loadView('pdf.data-shopping', [
+                    'data' => $data,
+                    'isPdf' => true,
+                ])
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('Data-Penjualan.pdf');
+    }
+
+    public function printDataShopping()
+    {
+        $data = Shopping::with(['user', 'details.product'])->latest()->get();
+        return view('pdf.data-shopping', [
+            'data' => $data,
+            'isPdf' => false,
+        ]);
+    }
+
+    public function dataShoppingExcel()
+    {
+        return Excel::download(new xlsReportShopping(), 'Data-Penjualan.xlsx');
     }
 }
