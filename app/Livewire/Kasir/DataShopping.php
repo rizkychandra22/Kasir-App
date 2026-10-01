@@ -73,8 +73,8 @@ class DataShopping extends Component
     {
         $product = Product::find($productId);
         
-        if (!$product || $product->stock <= 0) {
-            session()->flash('danger', 'Stok produk tidak mencukupi!');
+        if (!$product) {
+            session()->flash('danger', 'Produk tidak ditemukan!');
             return;
         }
 
@@ -182,19 +182,19 @@ class DataShopping extends Component
 
                 foreach ($this->cart as $item) {
                     $itemQty = (int)$item['qty'];
+                    $product = Product::with('bahans')->find($item['id']);
+                    $itemMaterialCost = $product ? ($product->calculateTotalRecipeCost() * $itemQty) : 0;
 
                     ShoppingDetail::create([
-                        'shopping_id' => $shopping->id,
-                        'product_id'  => $item['id'],
-                        'qty'         => $itemQty, 
-                        'price'       => (int)$item['price'],
-                        'subtotal'    => (int)$item['price'] * $itemQty,
+                        'shopping_id'   => $shopping->id,
+                        'product_id'    => $item['id'],
+                        'qty'           => $itemQty, 
+                        'price'         => (int)$item['price'],
+                        'subtotal'      => (int)$item['price'] * $itemQty,
+                        'material_cost' => $itemMaterialCost,
                     ]);
 
-                    $product = Product::with('bahans')->find($item['id']);
                     if ($product) {
-                        $product->decrement('stock', $itemQty);
-
                         // Automatic material stock deduction based on recipe quantity * product qty sold
                         foreach ($product->bahans as $b) {
                             $recipeQtyInBaseUnit = (float)($b->pivot->quantity ?? 1);
@@ -207,15 +207,19 @@ class DataShopping extends Component
 
                                 $bahan->update(['stock' => $stockAfter]);
 
+                                $costBase = (float)$bahan->cost_per_base_unit;
+
                                 BahanStockMovement::create([
-                                    'bahan_id' => $bahan->id,
-                                    'user_id' => auth()->id(),
-                                    'type' => 'out',
-                                    'qty' => $usage,
-                                    'stock_before' => $stockBefore,
-                                    'stock_after' => $stockAfter,
-                                    'reference' => $invoice,
-                                    'notes' => "{$product->name_prd} x {$itemQty}",
+                                    'bahan_id'           => $bahan->id,
+                                    'user_id'            => auth()->id(),
+                                    'type'               => 'out',
+                                    'qty'                => $usage,
+                                    'stock_before'       => $stockBefore,
+                                    'stock_after'        => $stockAfter,
+                                    'cost_per_base_unit' => $costBase,
+                                    'total_cost'         => $usage * $costBase,
+                                    'reference'          => $invoice,
+                                    'notes'              => "{$product->name_prd} x {$itemQty}",
                                 ]);
                             }
                         }
@@ -232,6 +236,83 @@ class DataShopping extends Component
         }
     }
 
+    public static function deductMaterialStockForProduct($productId, $itemQty, $invoice = 'TRX-TEST', $notes = null)
+    {
+        $product = Product::with('bahans')->find($productId);
+        if (!$product) return 0;
+
+        $totalTransactionMaterialCost = 0;
+
+        foreach ($product->bahans as $b) {
+            $recipeQtyInBaseUnit = (float)($b->pivot->quantity ?? 1);
+            $usage = $recipeQtyInBaseUnit * $itemQty;
+            
+            $bahan = Bahan::lockForUpdate()->find($b->id);
+            if ($bahan) {
+                $stockBefore = (float)$bahan->stock;
+                $stockAfter = max(0, $stockBefore - $usage);
+
+                $bahan->update(['stock' => $stockAfter]);
+
+                $costBase = (float)$bahan->cost_per_base_unit;
+                $movementCost = $usage * $costBase;
+                $totalTransactionMaterialCost += $movementCost;
+
+                BahanStockMovement::create([
+                    'bahan_id'           => $bahan->id,
+                    'user_id'            => auth()->id() ?? 1,
+                    'type'               => 'out',
+                    'qty'                => $usage,
+                    'stock_before'       => $stockBefore,
+                    'stock_after'        => $stockAfter,
+                    'cost_per_base_unit' => $costBase,
+                    'total_cost'         => $movementCost,
+                    'reference'          => $invoice,
+                    'notes'              => $notes ?? "{$product->name_prd} x {$itemQty}",
+                ]);
+            }
+        }
+
+        return $totalTransactionMaterialCost;
+    }
+
+    public static function validateStockForCart($cartItems)
+    {
+        $requiredMaterials = [];
+
+        foreach ($cartItems as $item) {
+            $productId = $item['product_id'] ?? $item['id'] ?? null;
+            $productQty = (float)($item['qty'] ?? $item['quantity'] ?? 1);
+            $product = Product::with('bahans')->find($productId);
+            if (!$product) continue;
+
+            foreach ($product->bahans as $b) {
+                $bahanId = $b->id;
+                $recipeQtyInBaseUnit = (float)($b->pivot->quantity ?? 1);
+                $needed = $recipeQtyInBaseUnit * $productQty;
+
+                if (!isset($requiredMaterials[$bahanId])) {
+                    $requiredMaterials[$bahanId] = 0;
+                }
+                $requiredMaterials[$bahanId] += $needed;
+            }
+        }
+
+        foreach ($requiredMaterials as $bahanId => $neededQty) {
+            $bahan = Bahan::find($bahanId);
+            if (!$bahan || (float)$bahan->stock < $neededQty) {
+                $bahanName = $bahan ? $bahan->name_bahan : 'Bahan';
+                $available = $bahan ? number_format((float)$bahan->stock, 2, ',', '.') : '0';
+                $neededFormatted = number_format($neededQty, 2, ',', '.');
+                $unit = $bahan ? ($bahan->base_unit ?? $bahan->unit) : '';
+
+                return "Stok bahan '{$bahanName}' tidak mencukupi. Stok tersedia: {$available} {$unit}, Kebutuhan: {$neededFormatted} {$unit}";
+            }
+        }
+
+        return null;
+    }
+
     public function viewDetail($id)
     {
         $this->selectedShopping = Shopping::with(['details.product', 'user'])->findOrFail($id);
@@ -241,8 +322,7 @@ class DataShopping extends Component
     {
         return view('livewire.kasir.data-shopping', [
             'shoppings' => Shopping::with('user')->orderBy('created_at', 'DESC')->get(),
-            'products' => Product::where('stock', '>', 0)
-                          ->whereIn('sales_type', [$this->sales_type, 'all'])
+            'products' => Product::whereIn('sales_type', [$this->sales_type, 'all'])
                           ->where('name_prd', 'like', '%'.$this->search_prd.'%')
                           ->get(),
         ])->layout('layouts.app', [

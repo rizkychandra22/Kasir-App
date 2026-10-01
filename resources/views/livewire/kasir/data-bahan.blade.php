@@ -155,19 +155,23 @@
                                     <table class="table table-bordered table-hover table-md">
                                         <thead class="thead-light text-center">
                                             <tr>
-                                                <th width="35">#</th>
+                                                <th width="30">#</th>
                                                 <th>Nama Bahan</th>
-                                                <th>Satuan Pembelian</th>
-                                                <th>Stok Tersedia (Base Unit)</th>
-                                                <th>Harga Pembelian</th>
-                                                <th>Digunakan di</th>
+                                                <th>Harga Beli</th>
+                                                <th>Pembelian</th>
+                                                <th>Base Unit</th>
+                                                <th>Harga / Base Unit</th>
+                                                <th>Stok Tersedia</th>
                                                 <th>Status</th>
-                                                <th>User</th>
-                                                <th width="130">Aksi</th>
+                                                <th width="140">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse ($bahans as $bahan)
+                                                @php
+                                                    $hasPrice = $bahan->hasValidPrice();
+                                                    $costBase = $bahan->cost_per_base_unit;
+                                                @endphp
                                                 <tr wire:key="bahan-{{ $bahan->id }}" class="{{ $bahan->status === 'inactive' ? 'bg-light text-muted' : '' }}">
                                                     <td class="text-center">{{ $loop->iteration }}</td>
                                                     <td class="font-weight-bold">
@@ -176,17 +180,30 @@
                                                             <small class="d-block text-muted font-weight-normal">{{ $bahan->description }}</small>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center"><span class="badge badge-info">{{ $bahan->purchase_unit ?? $bahan->unit }}</span></td>
+                                                    <td class="text-right font-weight-bold text-dark">
+                                                        @if($hasPrice)
+                                                            Rp{{ number_format($bahan->price, 0, ',', '.') }}
+                                                        @else
+                                                            <span class="badge badge-warning text-dark">Harga belum tersedia</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="badge badge-light border">{{ (float)($bahan->purchase_qty ?? 1) }} {{ $bahan->purchase_unit ?? $bahan->unit }}</span>
+                                                    </td>
+                                                    <td class="text-center font-weight-bold">
+                                                        <code>{{ $bahan->base_unit ?? $bahan->unit }}</code>
+                                                    </td>
+                                                    <td class="text-right font-weight-bold text-primary">
+                                                        @if($hasPrice)
+                                                            Rp{{ number_format($costBase, 2, ',', '.') }}/{{ $bahan->base_unit ?? $bahan->unit }}
+                                                        @else
+                                                            <span class="badge badge-warning text-dark small">Harga belum tersedia</span>
+                                                        @endif
+                                                    </td>
                                                     <td class="text-center font-weight-bold">
                                                         <span class="badge badge-{{ (float)$bahan->stock <= 50 ? 'danger' : 'success' }}">
                                                             {{ number_format((float)$bahan->stock, 2, ',', '.') }} {{ $bahan->base_unit ?? $bahan->unit }}
                                                         </span>
-                                                    </td>
-                                                    <td class="text-right font-weight-bold text-dark">
-                                                        Rp{{ number_format($bahan->price, 0, ',', '.') }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <span class="badge badge-secondary">{{ $bahan->products_count }} produk</span>
                                                     </td>
                                                     <td class="text-center">
                                                         @if($bahan->status === 'active')
@@ -199,9 +216,11 @@
                                                             </span>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center"><code class="font-weight-bold">{{ $bahan->user->name ?? '-' }}</code></td>
                                                     <td class="text-center">
                                                         <div class="btn-group">
+                                                            <button wire:click="viewDetail({{ $bahan->id }})" data-toggle="modal" data-target="#modalDetailBahan" class="btn btn-sm btn-outline-primary" title="Detail Bahan">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
                                                             <button wire:click="edit({{ $bahan->id }})" class="btn btn-sm btn-outline-warning" title="Edit Data">
                                                                 <i class="fas fa-edit"></i>
                                                             </button>
@@ -349,6 +368,96 @@
                             <i class="fas fa-info-circle d-block mb-2" style="font-size: 24px;"></i>
                             Belum ada riwayat pergerakan stok untuk bahan ini.
                         </div>
+                    @endif
+                </div>
+                <div class="modal-footer bg-whitesmoke">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL DETAIL BAHAN --}}
+    <div wire:ignore.self class="modal fade" id="modalDetailBahan" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-info-circle mr-2"></i> Detail Master Bahan</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    @if($selectedBahanForDetail)
+                        @php
+                            $convertedDetail = \App\Services\UnitConversionService::convertToBaseUnit(
+                                (float)($selectedBahanForDetail->purchase_qty ?? 1), 
+                                $selectedBahanForDetail->purchase_unit ?? $selectedBahanForDetail->unit
+                            );
+                            $baseQtyDetail = $convertedDetail['amount'];
+                            $hasPriceDetail = $selectedBahanForDetail->hasValidPrice();
+                            $costBaseDetail = $selectedBahanForDetail->cost_per_base_unit;
+                        @endphp
+                        <table class="table table-striped table-bordered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th width="40%">Nama Bahan</th>
+                                    <td class="font-weight-bold">{{ $selectedBahanForDetail->name_bahan }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Harga Pembelian</th>
+                                    <td class="font-weight-bold text-dark">
+                                        @if($hasPriceDetail)
+                                            Rp{{ number_format($selectedBahanForDetail->price, 0, ',', '.') }}
+                                        @else
+                                            <span class="badge badge-warning text-dark">Harga belum tersedia</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Jumlah Pembelian</th>
+                                    <td>{{ (float)($selectedBahanForDetail->purchase_qty ?? 1) }} {{ $selectedBahanForDetail->purchase_unit ?? $selectedBahanForDetail->unit }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Base Unit</th>
+                                    <td><code>{{ $selectedBahanForDetail->base_unit ?? $selectedBahanForDetail->unit }}</code></td>
+                                </tr>
+                                <tr>
+                                    <th>Konversi Base Unit</th>
+                                    <td>{{ number_format($baseQtyDetail, 2, ',', '.') }} {{ $selectedBahanForDetail->base_unit ?? $selectedBahanForDetail->unit }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Harga per {{ $selectedBahanForDetail->base_unit ?? $selectedBahanForDetail->unit }}</th>
+                                    <td class="font-weight-bold text-primary">
+                                        @if($hasPriceDetail)
+                                            Rp{{ number_format($costBaseDetail, 2, ',', '.') }}/{{ $selectedBahanForDetail->base_unit ?? $selectedBahanForDetail->unit }}
+                                        @else
+                                            <span class="badge badge-warning text-dark">Harga belum tersedia</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Stok Saat Ini</th>
+                                    <td class="font-weight-bold text-success">
+                                        {{ number_format((float)$selectedBahanForDetail->stock, 2, ',', '.') }} {{ $selectedBahanForDetail->base_unit ?? $selectedBahanForDetail->unit }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        <span class="badge badge-{{ $selectedBahanForDetail->status === 'active' ? 'success' : 'danger' }}">
+                                            {{ ucfirst($selectedBahanForDetail->status) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @if(!empty($selectedBahanForDetail->description))
+                                    <tr>
+                                        <th>Catatan</th>
+                                        <td>{{ $selectedBahanForDetail->description }}</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="text-center py-3 text-muted">Memuat data...</div>
                     @endif
                 </div>
                 <div class="modal-footer bg-whitesmoke">

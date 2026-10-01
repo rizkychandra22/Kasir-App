@@ -66,6 +66,69 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- RINGKASAN BIAYA NON-BAHAN (LABOR & OVERHEAD) --}}
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="section-title mt-0">Ringkasan Biaya Non-Bahan (Labor & Overhead)</div>
+                            </div>
+                            <div class="col-12 col-md-4 mb-3">
+                                <div class="card card-statistic-1 border shadow-sm mb-0">
+                                    <div class="card-icon bg-primary text-white">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="card-header">
+                                            <h4>Tenaga Kerja (Active)</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            Rp{{ number_format($totalActiveLabor, 0, ',', '.') }}
+                                        </div>
+                                        <div class="small text-muted px-3 pb-2">
+                                            Labor / Cup: <strong>Rp{{ number_format($laborCostPerCup, 2, ',', '.') }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-4 mb-3">
+                                <div class="card card-statistic-1 border shadow-sm mb-0">
+                                    <div class="card-icon bg-warning text-white">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="card-header">
+                                            <h4>Biaya Operasional (Active)</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            Rp{{ number_format($totalActiveOverhead, 0, ',', '.') }}
+                                        </div>
+                                        <div class="small text-muted px-3 pb-2">
+                                            Overhead / Cup: <strong>Rp{{ number_format($overheadCostPerCup, 2, ',', '.') }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-4 mb-3">
+                                <div class="card card-statistic-1 border shadow-sm mb-0 bg-light">
+                                    <div class="card-icon bg-info text-white">
+                                        <i class="fas fa-calculator"></i>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="card-header">
+                                            <h4>Non-Bahan / Cup</h4>
+                                        </div>
+                                        <div class="card-body text-primary">
+                                            Rp{{ number_format($totalNonMaterialPerCup, 2, ',', '.') }}
+                                        </div>
+                                        <div class="small text-muted px-3 pb-2">
+                                            Target: <strong>{{ number_format($targetMonthly, 0, ',', '.') }} cup</strong> / bulan
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

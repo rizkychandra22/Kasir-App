@@ -41,6 +41,21 @@ class User extends Authenticatable
         return $this->hasMany(Shopping::class);
     }
 
+    public function targetSales()
+    {
+        return $this->hasMany(TargetSale::class);
+    }
+
+    public function labors()
+    {
+        return $this->hasMany(Labor::class);
+    }
+
+    public function overheads()
+    {
+        return $this->hasMany(Overhead::class);
+    }
+
     public function isAdmin() {
         return $this->role === 'Admin';
     }

@@ -13,6 +13,10 @@ use App\Livewire\Kasir\DataCategory;
 use App\Livewire\Kasir\DataProduct;
 use App\Livewire\Kasir\DataShopping;
 use App\Livewire\Kasir\PreviewPrintProduct;
+use App\Livewire\Kasir\TargetPenjualan;
+use App\Livewire\Kasir\DataLabor;
+use App\Livewire\Kasir\DataOverhead;
+use App\Livewire\Kasir\HppProduct;
 
 // Import Class Global
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +56,10 @@ Route::middleware(['RoleUser:Kasir'])->prefix('dashboard')->group(function () {
     Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
     Route::get('/kasir/bahan', DataBahan::class)->name('kasir.bahan');
     Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
+    Route::get('/kasir/target-penjualan', TargetPenjualan::class)->name('kasir.target-penjualan');
+    Route::get('/kasir/labor', DataLabor::class)->name('kasir.labor');
+    Route::get('/kasir/overhead', DataOverhead::class)->name('kasir.overhead');
+    Route::get('/kasir/hpp-product', HppProduct::class)->name('kasir.hpp-product');
 });
 
 // Route Download PDF & Excel

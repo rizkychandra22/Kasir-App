@@ -15,8 +15,8 @@ class DataBahan extends Component
     // Stock adjustment properties
     public $adjustBahanId, $adjustBahanName, $adjustType = 'in', $adjustQty = 1, $adjustUnit = 'kg', $adjustNotes;
     
-    // History property
-    public $selectedBahanForHistory;
+    // History & Detail properties
+    public $selectedBahanForHistory, $selectedBahanForDetail;
 
     public $title = 'Dashboard';
     public $subpage = 'Overview Kasir';
@@ -146,12 +146,17 @@ class DataBahan extends Component
         $oldStock = (float)$bahan->stock;
         $newStock = (float)$this->stock;
         $baseUnit = UnitConversionService::getBaseUnit($this->purchase_unit);
-        $costPerBase = $newStock > 0 ? ((float)$this->price / $newStock) : 0;
+        
+        $purchaseQty = (float)($this->purchase_qty ?? 1);
+        $convertedPurchase = UnitConversionService::convertToBaseUnit($purchaseQty, $this->purchase_unit);
+        $purchaseQtyInBase = (float)$convertedPurchase['amount'];
+        $costPerBase = $purchaseQtyInBase > 0 ? ((float)$this->price / $purchaseQtyInBase) : 0;
 
         $bahan->update([
             'name_bahan' => $this->name_bahan,
             'unit' => $this->purchase_unit,
             'purchase_unit' => $this->purchase_unit,
+            'purchase_qty' => $purchaseQty,
             'base_unit' => $baseUnit,
             'stock' => $newStock,
             'price' => (float)$this->price,
@@ -177,6 +182,11 @@ class DataBahan extends Component
         session()->flash('success', "Master Bahan {$this->name_bahan} berhasil diperbarui!");
         $this->resetInput();
         $this->dispatch('close-modal');
+    }
+
+    public function viewDetail($id)
+    {
+        $this->selectedBahanForDetail = Bahan::with('user')->findOrFail($id);
     }
 
     public function openAdjustStock($id)

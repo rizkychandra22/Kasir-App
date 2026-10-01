@@ -30,6 +30,9 @@
                         <h4>{{ $content }}</h4>
                         <div class="card-header-action">
                             <div class="btn-group">
+                                <a href="{{ route('kasir.hpp-product') }}" class="btn btn-primary">
+                                    <i class="fas fa-calculator mr-1"></i> HPP & Margin
+                                </a>
                                 <a href="{{ route('kasir.bahan') }}" class="btn btn-info">
                                     <i class="fas fa-seedling mr-1"></i> Master Bahan
                                 </a>
@@ -59,7 +62,6 @@
                                         <th>Tipe Penjualan</th>
                                         <th>Harga Jual</th>
                                         <th>Resep / Komposisi Bahan</th>
-                                        <th>Stok</th>
                                         <th width="115">Aksi</th>
                                     </tr>
                                 </thead>
@@ -90,20 +92,53 @@
                                             </td>
                                             <td>
                                                 @if($product->bahans->count() > 0)
-                                                    <div class="mb-1">
-                                                        @foreach($product->bahans as $b)
-                                                            <span class="badge badge-light border mr-1 mb-1">
-                                                                <i class="fas fa-cubes text-info mr-1"></i>{{ $b->name_bahan }} &rarr; <strong>{{ number_format((float)($b->pivot->quantity ?? 1), 2, ',', '.') }} {{ $b->pivot->unit ?? $b->base_unit }}</strong>
-                                                            </span>
-                                                        @endforeach
+                                                    @php
+                                                        $costInfo = $product->getRecipeCostDetails();
+                                                    @endphp
+                                                    <div class="table-responsive mb-1">
+                                                        <table class="table table-sm table-bordered bg-white mb-1 small text-dark" style="min-width: 320px;">
+                                                            <thead class="bg-light text-center">
+                                                                <tr>
+                                                                    <th>Bahan</th>
+                                                                    <th>Qty</th>
+                                                                    <th>Unit</th>
+                                                                    <th>Harga</th>
+                                                                    <th>Biaya</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach($costInfo['details'] as $item)
+                                                                    <tr>
+                                                                        <td class="font-weight-bold">{{ $item['name_bahan'] }}</td>
+                                                                        <td class="text-center">{{ number_format($item['quantity'], 2, ',', '.') }}</td>
+                                                                        <td class="text-center"><code>{{ $item['unit'] }}</code></td>
+                                                                        <td class="text-right text-muted small">
+                                                                            @if($item['has_valid_price'])
+                                                                                Rp{{ number_format($item['cost_per_unit'], 2, ',', '.') }}/{{ $item['unit'] }}
+                                                                            @else
+                                                                                <span class="badge badge-warning text-dark small">Harga belum tersedia</span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td class="text-right font-weight-bold text-success">
+                                                                            @if($item['has_valid_price'])
+                                                                                Rp{{ number_format($item['item_cost'], 0, ',', '.') }}
+                                                                            @else
+                                                                                -
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr class="bg-light font-weight-bold">
+                                                                    <td colspan="4" class="text-right small text-uppercase">TOTAL BIAYA BAHAN:</td>
+                                                                    <td class="text-right text-primary font-weight-bold">Rp{{ number_format($costInfo['total_cost'], 0, ',', '.') }}</td>
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
                                                     </div>
                                                 @endif
                                                 <small class="text-muted d-block">{{ trim($product->description_prd ?? '') !== '' ? $product->description_prd : '—' }}</small>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="badge badge-{{ $product->stock <= 10 ? 'danger' : 'primary' }}">
-                                                    {{ $product->stock }}
-                                                </span>
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-outline-warning mt-1 mb-1 mr-1" wire:click="edit({{ $product->id }})" data-toggle="modal" data-target="#modalProduk" title="Edit">
@@ -116,7 +151,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="10" class="text-center text-muted">Tidak ada data produk</td>
+                                            <td colspan="9" class="text-center text-muted">Tidak ada data produk</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -232,14 +267,6 @@
                                     </div>
                                 </div>
                             @endif
-
-                            <div class="col-md-12">
-                                <div class="form-group mb-2">
-                                    <label>Stok Produk (Siap Jual)</label>
-                                    <input type="number" class="form-control @error('stock') is-invalid @enderror" wire:model="stock" placeholder="0">
-                                    @error('stock') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                </div>
-                            </div>
                         </div>
 
                         {{-- SELEKSI & JUMLAH KOMPOSISI RESEP BAHAN --}}
@@ -252,20 +279,40 @@
                             </div>
 
                             @if(count($compositions) > 0)
+                                @php $modalTotalCost = 0; @endphp
                                 <div class="table-responsive">
                                     <table class="table table-sm table-bordered bg-white mb-2">
-                                        <thead class="thead-light">
+                                        <thead class="thead-light text-center">
                                             <tr>
                                                 <th>Pilih Master Bahan</th>
-                                                <th width="130">Jumlah (Qty)</th>
-                                                <th width="130">Satuan Resep</th>
-                                                <th width="45" class="text-center">Aksi</th>
+                                                <th width="100">Jumlah (Qty)</th>
+                                                <th width="110">Satuan Resep</th>
+                                                <th width="120">Harga Satuan</th>
+                                                <th width="120">Biaya Bahan</th>
+                                                <th width="45">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($compositions as $index => $comp)
                                                 @php
                                                     $selectedBahanModel = !empty($comp['bahan_id']) ? $activeBahans->firstWhere('id', $comp['bahan_id']) : null;
+                                                    $costPerRecipeUnit = 0;
+                                                    $rowCost = 0;
+                                                    $hasValidPrice = false;
+
+                                                    if ($selectedBahanModel) {
+                                                        $hasValidPrice = $selectedBahanModel->hasValidPrice();
+                                                        if ($hasValidPrice) {
+                                                            $baseCost = $selectedBahanModel->cost_per_base_unit;
+                                                            $useUnit = $comp['unit'] ?? $selectedBahanModel->base_unit;
+                                                            $qtyInBase = \App\Services\UnitConversionService::convertToBaseUnit((float)($comp['quantity'] ?? 0), $useUnit)['amount'];
+                                                            $rowCost = $qtyInBase * $baseCost;
+                                                            $modalTotalCost += $rowCost;
+
+                                                            $recipeUnitConversion = \App\Services\UnitConversionService::convertToBaseUnit(1, $useUnit)['amount'];
+                                                            $costPerRecipeUnit = $recipeUnitConversion * $baseCost;
+                                                        }
+                                                    }
                                                 @endphp
                                                 <tr wire:key="comp-row-{{ $index }}">
                                                     <td>
@@ -299,6 +346,28 @@
                                                         </select>
                                                         @error('compositions.'.$index.'.unit') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                                     </td>
+                                                    <td class="text-right align-middle font-weight-bold">
+                                                        @if($selectedBahanModel)
+                                                            @if($hasValidPrice)
+                                                                <small class="text-muted">Rp{{ number_format($costPerRecipeUnit, 2, ',', '.') }}/{{ $comp['unit'] ?? $selectedBahanModel->base_unit }}</small>
+                                                            @else
+                                                                <span class="badge badge-warning text-dark small">Harga belum tersedia</span>
+                                                            @endif
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-right align-middle font-weight-bold text-success">
+                                                        @if($selectedBahanModel)
+                                                            @if($hasValidPrice)
+                                                                Rp{{ number_format($rowCost, 0, ',', '.') }}
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </td>
                                                     <td class="text-center align-middle">
                                                         <button type="button" class="btn btn-sm btn-outline-danger" wire:click="removeCompositionRow({{ $index }})">
                                                             <i class="fas fa-trash-alt"></i>
@@ -307,6 +376,13 @@
                                                 </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr class="bg-light font-weight-bold">
+                                                <td colspan="4" class="text-right small text-uppercase">TOTAL BIAYA BAHAN:</td>
+                                                <td class="text-right text-primary font-weight-bold">Rp{{ number_format($modalTotalCost, 0, ',', '.') }}</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             @else
