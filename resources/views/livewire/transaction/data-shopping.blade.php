@@ -66,8 +66,8 @@
                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalTambahPenjualan" wire:click="resetInput">
                                     <i class="fas fa-plus-circle mr-1"></i> Transaksi Baru
                                 </button>
-                                <a href="" class="btn btn-success">
-                                    <i class="fas fa-print mr-1"></i> Laporan
+                                <a href="{{ route('kasir.shopping.export') }}" class="btn btn-success" rel="noopener noreferrer">
+                                    <i class="fas fa-file-export mr-1"></i> Export
                                 </a>
                             </div>
                         </div>
