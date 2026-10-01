@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Operational;
 
 use App\Models\Labor;
 use App\Models\TargetSale;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -61,7 +62,7 @@ class DataLabor extends Component
         $this->validate();
 
         Labor::create([
-            'user_id' => auth()->id() ?? 1,
+            'user_id' => Auth::user()->id,
             'name' => $this->name,
             'monthly_salary' => $this->monthly_salary,
             'status' => $this->status,
@@ -127,7 +128,7 @@ class DataLabor extends Component
                   ->orWhere('notes', 'like', '%' . $this->search . '%');
         })->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('livewire.kasir.data-labor', [
+        return view('livewire.operational.data-labor', [
             'labors' => $labors,
             'targetMonthly' => $targetMonthly,
             'totalActiveSalary' => $totalActiveSalary,

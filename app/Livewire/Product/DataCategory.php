@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Product;
 
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class DataCategory extends Component
@@ -18,7 +19,9 @@ class DataCategory extends Component
 
     public function mount()
     {
-        $this->linkTitle = route('kasir.dashboard');
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
         $this->linkSubpage = route('kasir.category');
     }
 
@@ -59,7 +62,7 @@ class DataCategory extends Component
         Category::create([
             'name' => $this->name,
             'name_code' => strtoupper($this->name_code),
-            'user_id' => auth()->user()->id,
+            'user_id' => Auth::user()->id,
         ]);
 
         $this->resetInput();
@@ -86,7 +89,7 @@ class DataCategory extends Component
         $category->update([
             'name' => $this->name,
             'name_code' => strtoupper($this->name_code),
-            'user_id' => auth()->user()->id,
+            'user_id' => Auth::user()->id,
         ]);
 
         $this->resetInput();
@@ -101,7 +104,7 @@ class DataCategory extends Component
 
     public function render()
     {
-        return view('livewire.kasir.data-category',[
+        return view('livewire.product.data-category',[
             'categories' => Category::with('user')->withCount('products')->latest()->get(),
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,

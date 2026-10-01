@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Operational;
 
 use App\Models\Category;
 use App\Models\Product;
@@ -136,7 +136,7 @@ class HppProduct extends Component
             }
         }
 
-        return view('livewire.kasir.hpp-product', [
+        return view('livewire.operational.hpp-product', [
             'products' => $products,
             'categories' => Category::all(),
             'selectedProduct' => $selectedProduct,

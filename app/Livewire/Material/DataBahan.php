@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Material;
 
 use App\Models\Bahan;
 use App\Models\BahanStockMovement;
 use App\Services\UnitConversionService;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class DataBahan extends Component
@@ -26,7 +27,9 @@ class DataBahan extends Component
 
     public function mount()
     {
-        $this->linkTitle = route('kasir.dashboard');
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
         $this->linkSubpage = route('kasir.bahan');
         $this->calculateStockFromPurchase();
     }
@@ -85,7 +88,7 @@ class DataBahan extends Component
         $costPerBase = $baseStock > 0 ? ((float)$this->price / $baseStock) : 0;
 
         $bahan = Bahan::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'name_bahan' => $this->name_bahan,
             'unit' => $this->purchase_unit,
             'purchase_unit' => $this->purchase_unit,
@@ -101,7 +104,7 @@ class DataBahan extends Component
         if ($baseStock > 0) {
             BahanStockMovement::create([
                 'bahan_id' => $bahan->id,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::user()->id,
                 'type' => 'in',
                 'qty' => $baseStock,
                 'stock_before' => 0,
@@ -169,7 +172,7 @@ class DataBahan extends Component
             $diff = $newStock - $oldStock;
             BahanStockMovement::create([
                 'bahan_id' => $bahan->id,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::user()->id,
                 'type' => $diff > 0 ? 'in' : 'out',
                 'qty' => abs($diff),
                 'stock_before' => $oldStock,
@@ -237,7 +240,7 @@ class DataBahan extends Component
 
         BahanStockMovement::create([
             'bahan_id' => $bahan->id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::user()->id,
             'type' => $this->adjustType,
             'qty' => $qtyInBaseUnit,
             'stock_before' => $oldStock,
@@ -279,7 +282,7 @@ class DataBahan extends Component
 
     public function render()
     {
-        return view('livewire.kasir.data-bahan', [
+        return view('livewire.material.data-bahan', [
             'bahans' => Bahan::with('user')->withCount('products')->latest()->get(),
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,

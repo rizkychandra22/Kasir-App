@@ -39,7 +39,23 @@ Dokumen ini memuat peta jalan (*roadmap*) pengembangan aplikasi KasirApp, mencak
 
 ---
 
-## 3. Rencana Pengembangan Selanjutnya (*Next Phases*)
+## 3. Standar Arsitektur Struktur Folder (Feature / Module-Based)
+
+Untuk menjaga modularitas, kebersihan kode, dan efisiensi resource (menghindari folder kosong seperti `admin/` dan penumpukan di `kasir/`), struktur Livewire disepakati menggunakan penamaan modul domain bisnis:
+
+```text
+app/Livewire/ & resources/views/livewire/
+├── auth/            --> Autentikasi (Login, Profil)
+├── dashboard/       --> Overview Dashboard (Admin, Kasir)
+├── material/        --> Modul Bahan Baku & Inventaris (DataBahan, Mutasi Stok)
+├── product/         --> Modul Produk & Kategori (DataProduct, DataCategory, Export)
+├── transaction/     --> Modul Transaksi & Kasir POS (DataShopping)
+└── operational/     --> Modul Biaya Operasional & HPP (TargetPenjualan, Labor, Overhead, HppProduct)
+```
+
+---
+
+## 4. Rencana Pengembangan Selanjutnya (*Next Phases*)
 
 ### Sprint 3: Manajemen Akun Kasir oleh Admin ⏳ *(Prioritas Utama)*
 Saat ini akun kasir dibuat melalui database seeder. Dibutuhkan antarmuka khusus di dashboard admin untuk mengelola kasir:

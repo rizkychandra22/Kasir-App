@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Transaction;
 
 use App\Models\Bahan;
 use App\Models\BahanStockMovement;
@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Shopping;
 use App\Models\ShoppingDetail;
 use App\Services\UnitConversionService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -29,7 +30,9 @@ class DataShopping extends Component
 
     public function mount()
     {
-        $this->linkTitle = route('kasir.dashboard');
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
         $this->linkSubpage = route('kasir.shopping');
     }
 
@@ -174,7 +177,7 @@ class DataShopping extends Component
                 $shopping = Shopping::create([
                     'invoice' => $invoice,
                     'sales_type' => $this->sales_type,
-                    'user_id' => auth()->id(),
+                    'user_id' => Auth::user()->id,
                     'total_price' => (int)$this->total_price,
                     'pay' => (int)$this->pay,
                     'change' => (int)$this->change,
@@ -211,7 +214,7 @@ class DataShopping extends Component
 
                                 BahanStockMovement::create([
                                     'bahan_id'           => $bahan->id,
-                                    'user_id'            => auth()->id(),
+                                    'user_id'            => Auth::user()->id,
                                     'type'               => 'out',
                                     'qty'                => $usage,
                                     'stock_before'       => $stockBefore,
@@ -260,7 +263,7 @@ class DataShopping extends Component
 
                 BahanStockMovement::create([
                     'bahan_id'           => $bahan->id,
-                    'user_id'            => auth()->id() ?? 1,
+                    'user_id'            => Auth::user()->id,
                     'type'               => 'out',
                     'qty'                => $usage,
                     'stock_before'       => $stockBefore,
@@ -320,14 +323,14 @@ class DataShopping extends Component
 
     public function render()
     {
-        return view('livewire.kasir.data-shopping', [
+        return view('livewire.transaction.data-shopping', [
             'shoppings' => Shopping::with('user')->orderBy('created_at', 'DESC')->get(),
             'products' => Product::whereIn('sales_type', [$this->sales_type, 'all'])
                           ->where('name_prd', 'like', '%'.$this->search_prd.'%')
                           ->get(),
         ])->layout('layouts.app', [
-            'subpage' => 'Overview Kasir',
-            'content' => 'Data Penjualan'
+            'subpage' => $this->subpage,
+            'content' => $this->content,
         ]);
     }
 }

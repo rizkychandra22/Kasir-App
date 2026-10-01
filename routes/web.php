@@ -8,15 +8,15 @@ use App\Http\Controllers\Export\PdfController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard\Admin;
 use App\Livewire\Dashboard\Kasir;
-use App\Livewire\Kasir\DataBahan;
-use App\Livewire\Kasir\DataCategory;
-use App\Livewire\Kasir\DataProduct;
-use App\Livewire\Kasir\DataShopping;
-use App\Livewire\Kasir\PreviewPrintProduct;
-use App\Livewire\Kasir\TargetPenjualan;
-use App\Livewire\Kasir\DataLabor;
-use App\Livewire\Kasir\DataOverhead;
-use App\Livewire\Kasir\HppProduct;
+use App\Livewire\Material\DataBahan;
+use App\Livewire\Product\DataCategory;
+use App\Livewire\Product\DataProduct;
+use App\Livewire\Transaction\DataShopping;
+use App\Livewire\Product\PreviewPrintProduct;
+use App\Livewire\Operational\TargetPenjualan;
+use App\Livewire\Operational\DataLabor;
+use App\Livewire\Operational\DataOverhead;
+use App\Livewire\Operational\HppProduct;
 
 // Import Class Global
 use Illuminate\Support\Facades\Auth;

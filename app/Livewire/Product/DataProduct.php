@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Product;
 
 use App\Models\Bahan;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\UnitConversionService;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class DataProduct extends Component
@@ -25,7 +26,9 @@ class DataProduct extends Component
 
     public function mount()
     {
-        $this->linkTitle = route('kasir.dashboard');
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
         $this->linkSubpage = route('kasir.product');
     }
 
@@ -170,7 +173,7 @@ class DataProduct extends Component
 
         $product = Product::create([
             'category_id' => $this->category_id,
-            'user_id' => auth()->user()->id,
+            'user_id' => Auth::user()->id,
             'name_prd' => $this->name_prd,
             'code_prd' => $this->code_prd, 
             'description_prd' => $this->description_prd,
@@ -267,7 +270,7 @@ class DataProduct extends Component
         $product = Product::findOrFail($this->productId);
         $product->update([
             'category_id' => $this->category_id,
-            'user_id' => auth()->user()->id,
+            'user_id' => Auth::user()->id,
             'name_prd' => $this->name_prd,
             'description_prd' => $this->description_prd,
             'sales_type' => $this->sales_type,
@@ -291,7 +294,7 @@ class DataProduct extends Component
 
     public function render()
     {
-        return view('livewire.kasir.data-product', [
+        return view('livewire.product.data-product', [
             'products' => Product::with(['user', 'category', 'bahans'])->latest()->get(),
             'categories' => Category::with('user')->latest()->get(),
             'activeBahans' => Bahan::where('status', 'active')->latest()->get(),

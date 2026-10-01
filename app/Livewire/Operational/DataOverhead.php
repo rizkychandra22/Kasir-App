@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Operational;
 
 use App\Models\Overhead;
 use App\Models\TargetSale;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -65,7 +66,7 @@ class DataOverhead extends Component
         $this->validate();
 
         Overhead::create([
-            'user_id' => auth()->id() ?? 1,
+            'user_id' => Auth::user()->id,
             'name' => $this->name,
             'category' => $this->category,
             'nominal_monthly' => $this->nominal_monthly,
@@ -135,7 +136,7 @@ class DataOverhead extends Component
                   ->orWhere('notes', 'like', '%' . $this->search . '%');
         })->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('livewire.kasir.data-overhead', [
+        return view('livewire.operational.data-overhead', [
             'overheads' => $overheads,
             'targetMonthly' => $targetMonthly,
             'totalActiveNominal' => $totalActiveNominal,

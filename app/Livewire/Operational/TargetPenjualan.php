@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Operational;
 
 use App\Models\Labor;
 use App\Models\Overhead;
 use App\Models\TargetSale;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class TargetPenjualan extends Component
@@ -46,7 +47,7 @@ class TargetPenjualan extends Component
         $target = TargetSale::first();
         if (!$target) {
             $target = new TargetSale();
-            $target->user_id = auth()->id() ?? 1;
+            $target->user_id = Auth::user()->id;
         }
 
         $target->target_sales_monthly = $this->target_sales_monthly;
@@ -68,7 +69,7 @@ class TargetPenjualan extends Component
 
         $totalNonMaterialPerCup = $laborCostPerCup + $overheadCostPerCup;
 
-        return view('livewire.kasir.target-penjualan', [
+        return view('livewire.operational.target-penjualan', [
             'dailyTarget' => $dailyTarget,
             'totalActiveLabor' => $totalActiveLabor,
             'laborCostPerCup' => $laborCostPerCup,
