@@ -25,6 +25,7 @@ Dokumen ini memuat peta jalan (*roadmap*) pengembangan aplikasi KasirApp, mencak
 - [x] Perbaikan constraint unik kolom tabel kategori (`name_code` menjadi `string`).
 - [x] Eksekusi seluruh 15 migrasi dan seeder user awal (`UserSeeder`).
 - [x] Pembuatan launcher dan shortcut desktop langsung untuk **HeidiSQL**.
+- [x] Migrasi driver database ke **PostgreSQL 18** (`kasir_app`, port `5432`, `UserSeeder`, `CategorySeeder`, `ProductSeeder`).
 
 ### Sprint 2: Reorganisasi Role & Hak Akses Menu ✅
 - [x] Refactoring middleware `RoleUser` agar mendukung banyak role (*variadic roles*).
