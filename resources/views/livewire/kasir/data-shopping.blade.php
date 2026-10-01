@@ -15,8 +15,6 @@
             printWindow.document.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">');
             printWindow.document.write('<style>');
             printWindow.document.write('body { font-family: "Courier New", Courier, monospace; padding: 20px; width: 300px; }'); 
-            // printWindow.document.write('.badge-info { border: 1px solid #000; color: #000; background: none; }');
-            // printWindow.document.write('.text-danger { color: #000 !important; }');
             printWindow.document.write('.table td, .table th { padding: 2px; font-size: 12px; }');
             printWindow.document.write('</style></head><body>');
             printWindow.document.write(printContents);
@@ -46,7 +44,7 @@
                 @if (session()->has('success') || session()->has('danger'))
                     <div x-data="{ show: true }" 
                          x-show="show" 
-                         x-init="setTimeout(() => show = false, 3000)"
+                         x-init="setTimeout(() => show = false, 4000)"
                          x-transition:leave="transition ease-in duration-500"
                          x-transition:leave-start="opacity-100"
                          x-transition:leave-end="opacity-0"
@@ -66,7 +64,7 @@
                         <div class="card-header-action">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalTambahPenjualan" wire:click="resetInput">
-                                    <i class="fas fa-plus-circle mr-1"></i> Transaksi
+                                    <i class="fas fa-plus-circle mr-1"></i> Transaksi Baru
                                 </button>
                                 <a href="" class="btn btn-success">
                                     <i class="fas fa-print mr-1"></i> Laporan
@@ -82,6 +80,7 @@
                                     <tr>
                                         <th width="50">#</th>
                                         <th>No. Invoice</th>
+                                        <th>Tipe Penjualan</th>
                                         <th>Tanggal</th>
                                         <th>Kasir</th>
                                         <th>Total</th>
@@ -93,10 +92,17 @@
                                 <tbody>
                                     @forelse ($shoppings as $item)
                                         <tr wire:key="shopping-{{ $item->id }}">
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
                                             <td><span class="badge badge-primary">{{ $item->invoice }}</span></td>
+                                            <td class="text-center">
+                                                @if(($item->sales_type ?? 'offline') === 'online')
+                                                    <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE</span>
+                                                @else
+                                                    <span class="badge badge-secondary"><i class="fas fa-store mr-1"></i> OFFLINE</span>
+                                                @endif
+                                            </td>
                                             <td>{{ $item->created_at->format('d/m/Y H:i') }}</td>
-                                            <td><code class="font-weight-bold">{{ $item->user->name }}</code></td>
+                                            <td><code class="font-weight-bold">{{ $item->user->name ?? '-' }}</code></td>
                                             <td class="font-weight-bold">Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>
                                             <td class="font-weight-bold">Rp{{ number_format($item->pay, 0, ',', '.') }}</td>
                                             <td class="font-weight-bold">Rp{{ number_format($item->change, 0, ',', '.') }}</td>
@@ -112,7 +118,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="text-center text-muted">Belum ada transaksi.</td>
+                                            <td colspan="9" class="text-center text-muted">Belum ada transaksi.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -125,10 +131,7 @@
     </section>
 
     {{-- MODAL TAMBAH PENJUALAN --}}
-    <div wire:ignore.self class="modal fade" id="modalTambahPenjualan" tabindex="-1" role="dialog" aria-hidden="true"
-        x-data
-        @keydown.window.enter.prevent="$wire.store()"
-        @keydown.window.escape.prevent="$('#modalTambahPenjualan').modal('hide')">
+    <div wire:ignore.self class="modal fade" id="modalTambahPenjualan" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document"> 
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
@@ -139,10 +142,37 @@
                 </div>
                 
                 <div class="modal-body">
+                    {{-- SELECTOR TIPE PENJUALAN --}}
+                    <div class="card bg-light border mb-3">
+                        <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                            <span class="font-weight-bold text-dark"><i class="fas fa-tag mr-1 text-warning"></i> Pilih Tipe Penjualan:</span>
+                            <div class="btn-group">
+                                <button type="button" 
+                                        wire:click="setSalesType('offline')"
+                                        @if(count($cart) > 0 && $sales_type !== 'offline') 
+                                            wire:confirm="Anda akan mengubah tipe penjualan dari ONLINE ke OFFLINE. Harga produk di keranjang akan disesuaikan. Lanjutkan?" 
+                                        @endif
+                                        class="btn btn-sm {{ $sales_type === 'offline' ? 'btn-secondary font-weight-bold active' : 'btn-outline-secondary' }}">
+                                    <i class="fas fa-store mr-1"></i> Penjualan Offline
+                                </button>
+                                <button type="button" 
+                                        wire:click="setSalesType('online')"
+                                        @if(count($cart) > 0 && $sales_type !== 'online') 
+                                            wire:confirm="Anda akan mengubah tipe penjualan dari OFFLINE ke ONLINE. Harga produk di keranjang akan disesuaikan. Lanjutkan?" 
+                                        @endif
+                                        class="btn btn-sm {{ $sales_type === 'online' ? 'btn-success font-weight-bold active' : 'btn-outline-success' }}">
+                                    <i class="fas fa-globe mr-1"></i> Penjualan Online
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="section-title mt-0">Cari Produk</div>
-                            <div class="form-group">
+                            <div class="section-title mt-0 font-weight-bold text-dark">
+                                Cari Produk ({{ strtoupper($sales_type) }})
+                            </div>
+                            <div class="form-group mb-2">
                                 <div class="input-group">
                                     <input type="text" class="form-control" wire:model.live="search_prd" placeholder="Nama atau kode produk...">
                                     <div class="input-group-append">
@@ -151,33 +181,43 @@
                                 </div>
                             </div>
                             
-                            <div class="list-group shadow-sm border rounded" style="max-height: 400px; overflow-y: auto;">
+                            <div class="list-group shadow-sm border rounded" style="max-height: 380px; overflow-y: auto;">
                                 @forelse($products as $p)
+                                    @php
+                                        $priceToUse = $p->getPriceForSalesType($sales_type);
+                                        $hasPrice = $p->hasPriceForSalesType($sales_type);
+                                    @endphp
                                     <button type="button" wire:click="addToCart({{ $p->id }})" 
                                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-left-0 border-right-0">
                                         <div>
                                             <div class="font-weight-bold text-primary">{{ $p->name_prd }}</div>
-                                            <small class="text-dark">{{ $p->code_prd }} | R:
+                                            <small class="text-dark">{{ $p->code_prd }} | Stok:
                                                 <span class="{{ $p->stock <= 10 ? 'text-danger font-weight-bold' : '' }}">{{ $p->stock }}</span>
                                             </small>
                                         </div>
-                                        <span class="badge badge-warning badge-pill">Rp{{ number_format($p->price, 0, ',', '.') }}</span>
+                                        @if($sales_type === 'online' && !$hasPrice)
+                                            <span class="badge badge-danger badge-pill">Belum ada harga</span>
+                                        @else
+                                            <span class="badge badge-{{ $sales_type === 'online' ? 'success' : 'warning' }} badge-pill">
+                                                Rp{{ number_format($priceToUse, 0, ',', '.') }}
+                                            </span>
+                                        @endif
                                     </button>
                                 @empty
                                     <div class="text-center p-4 text-muted">
                                         <i class="fas fa-box-open d-block mb-2" style="font-size: 24px;"></i>
-                                        Produk tidak tersedia.
+                                        Tidak ada produk untuk saluran {{ strtoupper($sales_type) }}.
                                     </div>
                                 @endforelse
                             </div>
                         </div>
 
                         <div class="col-md-8 border-left">
-                            <div class="section-title mt-0 d-flex justify-content-between">
-                                <span>Daftar Belanja</span>
-                                <span class="text-muted">Item: {{ count($cart) }}</span>
+                            <div class="section-title mt-0 d-flex justify-content-between font-weight-bold text-dark">
+                                <span>Daftar Belanja ({{ strtoupper($sales_type) }})</span>
+                                <span class="text-muted font-weight-normal">Item: {{ count($cart) }}</span>
                             </div>
-                            <div class="table-responsive border rounded" style="min-height: 250px; max-height: 300px; overflow-y: auto;">
+                            <div class="table-responsive border rounded" style="min-height: 230px; max-height: 280px; overflow-y: auto;">
                                 <table class="table table-sm table-striped table-hover mb-0">
                                     <thead class="bg-light">
                                         <tr>
@@ -219,7 +259,7 @@
                             <div class="mt-3 p-3 rounded shadow-sm" style="background: #2d3436; color: #fff;">
                                 <div class="row align-items-center">
                                     <div class="col-md-5">
-                                        <small class="text-uppercase text-light font-weight-bold" style="letter-spacing: 1px;">Total Pembayaran</small>
+                                        <small class="text-uppercase text-light font-weight-bold" style="letter-spacing: 1px;">Total Pembayaran ({{ strtoupper($sales_type) }})</small>
                                         <h1 class="mb-0" style="font-size: 2.5rem; color: #fab1a0;">
                                             <small style="font-size: 1rem;">Rp</small>{{ number_format($total_price, 0, ',', '.') }}
                                         </h1>
@@ -253,7 +293,7 @@
                     <button type="button" class="btn btn-primary shadow-sm" 
                             wire:click="store" 
                             {{ empty($cart) || $change < 0 ? 'disabled' : '' }}>
-                        <i class="fas fa-save mr-2"></i> Simpan Transaksi
+                        <i class="fas fa-save mr-2"></i> Simpan Transaksi ({{ strtoupper($sales_type) }})
                     </button>
                 </div>
             </div>
@@ -275,6 +315,11 @@
                         <div class="text-center mb-4">
                             <h5 class="mb-0 font-weight-bold">STRUK PEMBELIAN</h5>
                             <small class="text-bold badge badge-info mt-2">{{ $selectedShopping->invoice }}</small>
+                            <div class="mt-1">
+                                <span class="badge badge-{{ ($selectedShopping->sales_type ?? 'offline') === 'online' ? 'success' : 'secondary' }}">
+                                    Penjualan {{ strtoupper($selectedShopping->sales_type ?? 'offline') }}
+                                </span>
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-between mb-1">
@@ -283,7 +328,7 @@
                         </div>
                         <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
                             <span>Kasir:</span>
-                            <span class="font-weight-bold">{{ $selectedShopping->user->name }}</span>
+                            <span class="font-weight-bold">{{ $selectedShopping->user->name ?? '-' }}</span>
                         </div>
 
                         <table class="table table-sm table-borderless">
@@ -298,7 +343,7 @@
                                 @foreach($selectedShopping->details as $detail)
                                     <tr>
                                         <td>
-                                            {{ $detail->product->name_prd }}<br>
+                                            {{ $detail->product->name_prd ?? '-' }}<br>
                                             <small>@ Rp{{ number_format($detail->price, 0, ',', '.') }}</small>
                                         </td>
                                         <td class="text-center align-middle">{{ $detail->qty }}</td>
@@ -345,11 +390,3 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    window.addEventListener('close-modal', event => {
-        $('#modalTambahPenjualan').modal('hide');
-    });
-</script>
-@endpush
