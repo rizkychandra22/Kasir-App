@@ -12,6 +12,7 @@ use App\Livewire\Material\DataBahan;
 use App\Livewire\Product\DataCategory;
 use App\Livewire\Product\DataProduct;
 use App\Livewire\Transaction\DataShopping;
+use App\Livewire\Transaction\PreviewPrintShopping;
 use App\Livewire\Product\PreviewPrintProduct;
 use App\Livewire\Operational\TargetPenjualan;
 use App\Livewire\Operational\DataLabor;
@@ -66,6 +67,7 @@ Route::middleware(['RoleUser:Admin,Kasir'])->prefix('dashboard')->group(function
     Route::get('/kasir/product/export', PreviewPrintProduct::class)->name('kasir.product.export');
     Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
     Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
+    Route::get('/kasir/shopping/export', PreviewPrintShopping::class)->name('kasir.shopping.export');
 });
 
 // Route Download PDF & Excel
@@ -73,3 +75,6 @@ Route::get('/download/pdf/struck/shopping/{id}', [PdfController::class, 'struckS
 Route::get('/download/pdf/data-product', [PdfController::class, 'dataProduct'])->name('data.product.pdf');
 Route::get('/print/data-product', [PdfController::class, 'printDataProduct'])->name('data.product.print');
 Route::get('/download/excel/data-product', [PdfController::class, 'dataProductExcel'])->name('data.product.excel');
+Route::get('/download/pdf/data-shopping', [PdfController::class, 'dataShopping'])->name('data.shopping.pdf');
+Route::get('/print/data-shopping', [PdfController::class, 'printDataShopping'])->name('data.shopping.print');
+Route::get('/download/excel/data-shopping', [PdfController::class, 'dataShoppingExcel'])->name('data.shopping.excel');
