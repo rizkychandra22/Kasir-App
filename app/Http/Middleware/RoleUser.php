@@ -14,7 +14,7 @@ class RoleUser
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         if (!Auth::check()) {
             return redirect()->route('login')->withErrors([
@@ -23,9 +23,20 @@ class RoleUser
         }
 
         $user = Auth::user();   
-        if ($user->role === $role) {
+        if (in_array($user->role, $roles)) {
             return $next($request);
         }
+
+        if ($user->role === 'Admin') {
+            return redirect()->route('admin.dashboard')->withErrors([
+                'loginAkses' => 'Anda tidak memiliki akses untuk halaman tersebut.'
+            ]);
+        } elseif ($user->role === 'Kasir') {
+            return redirect()->route('kasir.dashboard')->withErrors([
+                'loginAkses' => 'Anda tidak memiliki akses untuk halaman tersebut.'
+            ]);
+        }
+
         Auth::logout();
         return redirect()
             ->route('login')->withErrors([

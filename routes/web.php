@@ -43,23 +43,29 @@ Route::middleware(['RoleUser:Admin,Kasir'])->get('/user', function () {
     ]);
 });
 
-// Route Grup Role Admin
+// Route Khusus Role Admin
 Route::middleware(['RoleUser:Admin'])->prefix('dashboard')->group(function () {
     Route::get('/admin', Admin::class)->name('admin.dashboard');
-});
 
-// Route Grup Role Kasir
-Route::middleware(['RoleUser:Kasir'])->prefix('dashboard')->group(function () {
-    Route::get('/kasir', Kasir::class)->name('kasir.dashboard');
-    Route::get('/kasir/product', DataProduct::class)->name('kasir.product');
-    Route::get('/kasir/product/export', PreviewPrintProduct::class)->name('kasir.product.export');
-    Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
-    Route::get('/kasir/bahan', DataBahan::class)->name('kasir.bahan');
-    Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
+    // Menu Biaya & Target HPP (Khusus Admin)
     Route::get('/kasir/target-penjualan', TargetPenjualan::class)->name('kasir.target-penjualan');
     Route::get('/kasir/labor', DataLabor::class)->name('kasir.labor');
     Route::get('/kasir/overhead', DataOverhead::class)->name('kasir.overhead');
     Route::get('/kasir/hpp-product', HppProduct::class)->name('kasir.hpp-product');
+});
+
+// Route Khusus Role Kasir
+Route::middleware(['RoleUser:Kasir'])->prefix('dashboard')->group(function () {
+    Route::get('/kasir', Kasir::class)->name('kasir.dashboard');
+});
+
+// Route Bersama (Dapat diakses oleh Admin & Kasir)
+Route::middleware(['RoleUser:Admin,Kasir'])->prefix('dashboard')->group(function () {
+    Route::get('/kasir/bahan', DataBahan::class)->name('kasir.bahan');
+    Route::get('/kasir/product', DataProduct::class)->name('kasir.product');
+    Route::get('/kasir/product/export', PreviewPrintProduct::class)->name('kasir.product.export');
+    Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
+    Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
 });
 
 // Route Download PDF & Excel
