@@ -49,7 +49,8 @@
                 padding: 2px 0;
             }
 
-            .product-table { margin-bottom: {{ $isPdf ? '20px' : '30px' }}; }
+            .product-table { margin-bottom: 30px; }
+            .product-table.pdf-mode { margin-bottom: 20px; }
 
             .product-table thead th {
                 background: #f3f3f3;
@@ -69,7 +70,7 @@
             <div class="dash"></div>
         </div>
 
-        <table class="product-table">
+        <table class="product-table {{ $isPdf ? 'pdf-mode' : '' }}">
             <thead>
                 <tr>
                     <th class="text-center" style="width: 6%;">#</th>
