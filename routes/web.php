@@ -8,10 +8,15 @@ use App\Http\Controllers\Export\PdfController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Dashboard\Admin;
 use App\Livewire\Dashboard\Kasir;
-use App\Livewire\Kasir\DataCategory;
-use App\Livewire\Kasir\DataProduct;
-use App\Livewire\Kasir\DataShopping;
-use App\Livewire\Kasir\PreviewPrintProduct;
+use App\Livewire\Material\DataBahan;
+use App\Livewire\Product\DataCategory;
+use App\Livewire\Product\DataProduct;
+use App\Livewire\Transaction\DataShopping;
+use App\Livewire\Product\PreviewPrintProduct;
+use App\Livewire\Operational\TargetPenjualan;
+use App\Livewire\Operational\DataLabor;
+use App\Livewire\Operational\DataOverhead;
+use App\Livewire\Operational\HppProduct;
 
 // Import Class Global
 use Illuminate\Support\Facades\Auth;
@@ -38,14 +43,25 @@ Route::middleware(['RoleUser:Admin,Kasir'])->get('/user', function () {
     ]);
 });
 
-// Route Grup Role Admin
+// Route Khusus Role Admin
 Route::middleware(['RoleUser:Admin'])->prefix('dashboard')->group(function () {
     Route::get('/admin', Admin::class)->name('admin.dashboard');
+
+    // Menu Biaya & Target HPP (Khusus Admin)
+    Route::get('/kasir/target-penjualan', TargetPenjualan::class)->name('kasir.target-penjualan');
+    Route::get('/kasir/labor', DataLabor::class)->name('kasir.labor');
+    Route::get('/kasir/overhead', DataOverhead::class)->name('kasir.overhead');
+    Route::get('/kasir/hpp-product', HppProduct::class)->name('kasir.hpp-product');
 });
 
-// Route Grup Role Kasir
+// Route Khusus Role Kasir
 Route::middleware(['RoleUser:Kasir'])->prefix('dashboard')->group(function () {
     Route::get('/kasir', Kasir::class)->name('kasir.dashboard');
+});
+
+// Route Bersama (Dapat diakses oleh Admin & Kasir)
+Route::middleware(['RoleUser:Admin,Kasir'])->prefix('dashboard')->group(function () {
+    Route::get('/kasir/bahan', DataBahan::class)->name('kasir.bahan');
     Route::get('/kasir/product', DataProduct::class)->name('kasir.product');
     Route::get('/kasir/product/export', PreviewPrintProduct::class)->name('kasir.product.export');
     Route::get('/kasir/category', DataCategory::class)->name('kasir.category');

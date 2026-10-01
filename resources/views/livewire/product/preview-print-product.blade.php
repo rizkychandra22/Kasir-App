@@ -35,7 +35,6 @@
                                         <th>Produk</th>
                                         <th>Kode</th>
                                         <th>Harga</th>
-                                        <th>Stok</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -46,11 +45,10 @@
                                             <td>{{ $product->name_prd }}</td>
                                             <td class="font-weight-bold">{{ $product->code_prd }}</td>
                                             <td class="font-weight-bold">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
-                                            <td class="font-weight-bold">{{ $product->stock }}</td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="7" class="text-center text-muted">Tidak ada data produk</td>
+                                            <td colspan="5" class="text-center text-muted">Tidak ada data produk</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

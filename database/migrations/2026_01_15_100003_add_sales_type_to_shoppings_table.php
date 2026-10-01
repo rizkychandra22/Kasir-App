@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('name_code')->unique();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
+        Schema::table('shoppings', function (Blueprint $table) {
+            $table->enum('sales_type', ['online', 'offline'])->default('offline')->after('invoice');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::table('shoppings', function (Blueprint $table) {
+            $table->dropColumn('sales_type');
+        });
     }
 };

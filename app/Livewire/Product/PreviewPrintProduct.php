@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Livewire\Kasir;
+namespace App\Livewire\Product;
 
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class PreviewPrintProduct extends Component
@@ -16,13 +17,15 @@ class PreviewPrintProduct extends Component
 
     public function mount()
     {
-        $this->linkTitle = route('kasir.dashboard');
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
         $this->linkSubpage = route('kasir.product.export');
     }
 
     public function render()
     {
-        return view('livewire.kasir.preview-print-product', [
+        return view('livewire.product.preview-print-product', [
             'products' => Product::with('category')->latest()->get()
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,

@@ -8,6 +8,7 @@ class Shopping extends Model
 {
     protected $fillable = [
         'invoice',
+        'sales_type',
         'user_id',
         'total_price',
         'pay',

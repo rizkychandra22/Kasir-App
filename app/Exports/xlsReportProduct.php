@@ -26,7 +26,7 @@ class xlsReportProduct implements FromCollection, WithHeadings, WithMapping, Wit
             'Produk',
             'Kode',
             'Harga',
-            'Stok',
+            'Tipe Penjualan',
         ];
     }
 
@@ -41,7 +41,7 @@ class xlsReportProduct implements FromCollection, WithHeadings, WithMapping, Wit
             $product->name_prd,
             $product->code_prd,
             $product->price,
-            $product->stock,
+            strtoupper($product->sales_type ?? 'ALL'),
         ];
     }
 
