@@ -12,17 +12,17 @@ class HppService
     /**
      * Calculate complete HPP details for a product
      */
-    public static function getProductHppDetails(Product $product)
+    public static function getProductHppDetails(Product $product, $year = null)
     {
-        $target = TargetSale::getTargetSettings();
-        $targetMonthly = (float)$target->target_sales_monthly;
-        $isTargetConfigured = $targetMonthly > 0;
+        $target = TargetSale::getTargetSettings($year);
+        $targetCups = $target->getTargetCupsMonthly();
+        $isTargetConfigured = $targetCups > 0;
 
         $hasRecipe = $product->bahans()->count() > 0;
         $hppBahan = (float)$product->calculateTotalRecipeCost();
 
-        $laborCostPerCup = $isTargetConfigured ? (float)Labor::getCostPerCup() : 0.00;
-        $overheadCostPerCup = $isTargetConfigured ? (float)Overhead::getCostPerCup() : 0.00;
+        $laborCostPerCup = $isTargetConfigured ? (float)Labor::getCostPerCup($year) : 0.00;
+        $overheadCostPerCup = $isTargetConfigured ? (float)Overhead::getCostPerCup($year) : 0.00;
         $hppTotal = $hppBahan + $laborCostPerCup + $overheadCostPerCup;
 
         // Warnings / Statuses

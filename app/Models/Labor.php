@@ -37,13 +37,14 @@ class Labor extends Model
     }
 
     /**
-     * Get Labor Cost per Cup based on active monthly target sales
+     * Get Labor Cost per Cup based on active monthly target cup sales
      */
-    public static function getCostPerCup()
+    public static function getCostPerCup($year = null)
     {
-        $target = TargetSale::getTargetSettings();
-        if ($target->target_sales_monthly > 0) {
-            return round(static::getTotalActiveSalary() / $target->target_sales_monthly, 4);
+        $target = TargetSale::getTargetSettings($year);
+        $targetCups = $target->getTargetCupsMonthly();
+        if ($targetCups > 0) {
+            return round(static::getTotalActiveSalary() / $targetCups, 4);
         }
         return 0;
     }

@@ -125,10 +125,10 @@ class DataOverhead extends Component
     public function render()
     {
         $target = TargetSale::getTargetSettings();
-        $targetMonthly = (float)$target->target_sales_monthly;
+        $targetMonthly = $target->getTargetCupsMonthly();
 
         $totalActiveNominal = Overhead::getTotalActiveNominal();
-        $overheadCostPerCup = $targetMonthly > 0 ? round($totalActiveNominal / $targetMonthly, 2) : 0;
+        $overheadCostPerCup = Overhead::getCostPerCup();
 
         $overheads = Overhead::when($this->search, function ($query) {
             $query->where('name', 'like', '%' . $this->search . '%')

@@ -97,15 +97,29 @@
                                             <td class="text-center">
                                                 @if(($item->sales_type ?? 'offline') === 'online')
                                                     <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE</span>
+                                                @elseif(($item->payment_method ?? 'cash') === 'qris')
+                                                    <span class="badge badge-info"><i class="fas fa-qrcode mr-1"></i> OFFLINE (QRIS)</span>
                                                 @else
-                                                    <span class="badge badge-secondary"><i class="fas fa-store mr-1"></i> OFFLINE</span>
+                                                    <span class="badge badge-secondary"><i class="fas fa-money-bill-wave mr-1"></i> OFFLINE (CASH)</span>
                                                 @endif
                                             </td>
                                             <td>{{ $item->created_at->format('d/m/Y H:i') }}</td>
                                             <td><code class="font-weight-bold">{{ $item->user->name ?? '-' }}</code></td>
                                             <td class="font-weight-bold">Rp{{ number_format($item->total_price, 0, ',', '.') }}</td>
-                                            <td class="font-weight-bold">Rp{{ number_format($item->pay, 0, ',', '.') }}</td>
-                                            <td class="font-weight-bold">Rp{{ number_format($item->change, 0, ',', '.') }}</td>
+                                            <td class="font-weight-bold">
+                                                @if(($item->payment_method ?? 'cash') === 'qris')
+                                                    <span class="text-muted font-weight-normal">-</span>
+                                                @else
+                                                    Rp{{ number_format($item->pay, 0, ',', '.') }}
+                                                @endif
+                                            </td>
+                                            <td class="font-weight-bold">
+                                                @if(($item->payment_method ?? 'cash') === 'qris')
+                                                    <span class="text-muted font-weight-normal">-</span>
+                                                @else
+                                                    Rp{{ number_format($item->change, 0, ',', '.') }}
+                                                @endif
+                                            </td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-info" 
                                                         title="Detail" 
@@ -255,30 +269,80 @@
                             </div>
 
                             <div class="mt-3 p-3 rounded shadow-sm" style="background: #2d3436; color: #fff;">
+                                {{-- Pilihan Metode Pembayaran Khusus Transaksi Offline --}}
+                                @if($sales_type === 'offline')
+                                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.15) !important;">
+                                        <span class="text-light small text-uppercase font-weight-bold">
+                                            <i class="fas fa-credit-card mr-1 text-warning"></i> Metode Pembayaran:
+                                        </span>
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" 
+                                                    wire:click="setPaymentMethod('cash')" 
+                                                    class="btn {{ $payment_method === 'cash' ? 'btn-success font-weight-bold active' : 'btn-outline-light text-white' }}">
+                                                <i class="fas fa-money-bill-wave mr-1"></i> CASH
+                                            </button>
+                                            <button type="button" 
+                                                    wire:click="setPaymentMethod('qris')" 
+                                                    class="btn {{ $payment_method === 'qris' ? 'btn-info font-weight-bold active' : 'btn-outline-light text-white' }}">
+                                                <i class="fas fa-qrcode mr-1"></i> QRIS
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="row align-items-center">
                                     <div class="col-md-5">
                                         <small class="text-uppercase text-light font-weight-bold" style="letter-spacing: 1px;">Total Pembayaran ({{ strtoupper($sales_type) }})</small>
                                         <h1 class="mb-0" style="font-size: 2.5rem; color: #fab1a0;">
                                             <small style="font-size: 1rem;">Rp</small>{{ number_format($total_price, 0, ',', '.') }}
                                         </h1>
+                                        @if($sales_type === 'offline' && $payment_method === 'qris')
+                                            <div class="mt-1">
+                                                <span class="badge badge-info"><i class="fas fa-qrcode mr-1"></i> METODE: QRIS</span>
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="col-md-7 border-left" style="border-color: rgba(255,255,255,0.1) !important;">
-                                        <div class="form-group mb-2">
-                                            <label class="text-light small text-uppercase">Nominal Pembayaran</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-transparent text-white border-white">Rp</span>
+                                        @if($sales_type === 'offline' && $payment_method === 'qris')
+                                            {{-- AREA INFORMASI & PLACEHOLDER QRIS --}}
+                                            <div class="p-2 rounded text-center" style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.25);">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="text-light small text-uppercase font-weight-bold">PEMBAYARAN QRIS</span>
+                                                    <span class="badge badge-info font-weight-bold">QRIS</span>
                                                 </div>
-                                                <input type="number" class="form-control bg-transparent text-white border-white text-right" 
-                                                    wire:model.live="pay" placeholder="0" style="font-size: 1.5rem;">
+                                                
+                                                <div class="my-2 p-2 bg-light text-dark rounded border d-flex flex-column align-items-center justify-content-center">
+                                                    <i class="fas fa-qrcode fa-2x text-secondary mb-1"></i>
+                                                    <span class="badge badge-warning text-dark font-weight-bold">[ QRIS BELUM AKTIF ]</span>
+                                                    <small class="text-muted mt-1" style="font-size: 11px;">QRIS belum dikonfigurasi & gateway belum aktif</small>
+                                                </div>
+
+                                                <div class="d-flex justify-content-between align-items-center pt-1 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                                                    <span class="text-light small text-uppercase">TOTAL YANG HARUS DIBAYAR:</span>
+                                                    <h4 class="mb-0 text-warning font-weight-bold">
+                                                        Rp {{ number_format($total_price, 0, ',', '.') }}
+                                                    </h4>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-light small text-uppercase">Kembalian:</span>
-                                            <h4 class="mb-0 {{ $change < 0 ? 'text-danger' : 'text-success' }}">
-                                                Rp {{ number_format($change, 0, ',', '.') }}
-                                            </h4>
-                                        </div>
+                                        @else
+                                            {{-- FORM PEMBAYARAN CASH --}}
+                                            <div class="form-group mb-2">
+                                                <label class="text-light small text-uppercase">Nominal Pembayaran</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text bg-transparent text-white border-white">Rp</span>
+                                                    </div>
+                                                    <input type="number" class="form-control bg-transparent text-white border-white text-right" 
+                                                        wire:model.live="pay" placeholder="0" style="font-size: 1.5rem;">
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-light small text-uppercase">Kembalian:</span>
+                                                <h4 class="mb-0 {{ $change < 0 ? 'text-danger' : 'text-success' }}">
+                                                    Rp {{ number_format($change, 0, ',', '.') }}
+                                                </h4>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -290,7 +354,7 @@
                     <button type="button" class="btn btn-danger shadow-sm" data-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-primary shadow-sm" 
                             wire:click="store" 
-                            {{ empty($cart) || $change < 0 ? 'disabled' : '' }}>
+                            {{ empty($cart) || ($sales_type === 'offline' && $payment_method === 'cash' && $change < 0) || ($sales_type === 'online' && $change < 0) ? 'disabled' : '' }}>
                         <i class="fas fa-save mr-2"></i> Simpan Transaksi ({{ strtoupper($sales_type) }})
                     </button>
                 </div>
@@ -314,8 +378,8 @@
                             <h5 class="mb-0 font-weight-bold">STRUK PEMBELIAN</h5>
                             <small class="text-bold badge badge-info mt-2">{{ $selectedShopping->invoice }}</small>
                             <div class="mt-1">
-                                <span class="badge badge-{{ ($selectedShopping->sales_type ?? 'offline') === 'online' ? 'success' : 'secondary' }}">
-                                    Penjualan {{ strtoupper($selectedShopping->sales_type ?? 'offline') }}
+                                <span class="badge badge-{{ ($selectedShopping->sales_type ?? 'offline') === 'online' ? 'success' : (($selectedShopping->payment_method ?? 'cash') === 'qris' ? 'info' : 'secondary') }}">
+                                    Penjualan {{ $selectedShopping->sales_type_label }}
                                 </span>
                             </div>
                         </div>
@@ -356,14 +420,21 @@
                                 <span>TOTAL PEMBAYARAN</span>
                                 <span class="text-danger">Rp{{ number_format($selectedShopping->total_price, 0, ',', '.') }}</span>
                             </div>
-                            <div class="d-flex justify-content-between font-weight-bold">
-                                <span>Nominal Pembayaran</span>
-                                <span class="text-primary">Rp{{ number_format($selectedShopping->pay, 0, ',', '.') }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between font-weight-bold font-weight-600">
-                                <span>Kembalian</span>
-                                <span class="text-success">Rp{{ number_format($selectedShopping->change, 0, ',', '.') }}</span>
-                            </div>
+                            @if(($selectedShopping->payment_method ?? 'cash') === 'qris')
+                                <div class="d-flex justify-content-between font-weight-bold">
+                                    <span>Metode Pembayaran</span>
+                                    <span class="badge badge-info font-weight-bold">QRIS</span>
+                                </div>
+                            @else
+                                <div class="d-flex justify-content-between font-weight-bold">
+                                    <span>Nominal Pembayaran</span>
+                                    <span class="text-primary">Rp{{ number_format($selectedShopping->pay, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between font-weight-bold font-weight-600">
+                                    <span>Kembalian</span>
+                                    <span class="text-success">Rp{{ number_format($selectedShopping->change, 0, ',', '.') }}</span>
+                                </div>
+                            @endif
                         </div>
                         <div class="line">
                             <div class="dash"></div>

@@ -57,7 +57,7 @@
         <div class="dash"></div>
         <h5 class="invoice-title font-weight-bold">STRUK PEMBELIAN</h5>
         <div class="badge">{{ $data->invoice }}</div>
-        <div style="font-size: 10px; margin-top: 3px; font-weight: bold;">[PENJUALAN {{ strtoupper($data->sales_type ?? 'OFFLINE') }}]</div>
+        <div style="font-size: 10px; margin-top: 3px; font-weight: bold;">[PENJUALAN {{ $data->sales_type_label }}]</div>
     </div>
 
     <table class="info-table">
@@ -98,14 +98,21 @@
             <td class="font-weight-bold" style="font-size: 13px; padding-top: 8px;">TOTAL PEMBAYARAN</td>
             <td class="text-right font-weight-bold total-main" style="padding-top: 8px;">Rp{{ number_format($data->total_price, 0, ',', '.') }}</td>
         </tr>
-        <tr class="total-row">
-            <td class="font-weight-bold">Nominal Pembayaran</td>
-            <td class="text-right font-weight-bold">Rp{{ number_format($data->pay, 0, ',', '.') }}</td>
-        </tr>
-        <tr class="total-row">
-            <td class="font-weight-bold">Kembalian</td>
-            <td class="text-right font-weight-bold">Rp{{ number_format($data->change, 0, ',', '.') }}</td>
-        </tr>
+        @if(($data->payment_method ?? 'cash') === 'qris')
+            <tr class="total-row">
+                <td class="font-weight-bold">Metode Pembayaran</td>
+                <td class="text-right font-weight-bold">QRIS</td>
+            </tr>
+        @else
+            <tr class="total-row">
+                <td class="font-weight-bold">Nominal Pembayaran</td>
+                <td class="text-right font-weight-bold">Rp{{ number_format($data->pay, 0, ',', '.') }}</td>
+            </tr>
+            <tr class="total-row">
+                <td class="font-weight-bold">Kembalian</td>
+                <td class="text-right font-weight-bold">Rp{{ number_format($data->change, 0, ',', '.') }}</td>
+            </tr>
+        @endif
     </table>
 
     <div class="text-center">

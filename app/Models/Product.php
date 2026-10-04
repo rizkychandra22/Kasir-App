@@ -67,12 +67,24 @@ class Product extends Model
     }
 
     /**
+     * Alias for getPriceForSalesType
+     */
+    public function getPrice($salesType = 'offline')
+    {
+        return $this->getPriceForSalesType($salesType);
+    }
+
+    /**
      * Calculate total recipe material cost (HPP Bahan) for 1 portion of this product
      */
     public function calculateTotalRecipeCost()
     {
         $totalCost = 0;
-        foreach ($this->bahans as $b) {
+        $bahans = $this->relationLoaded('bahans') && $this->bahans->isNotEmpty()
+            ? $this->bahans
+            : $this->bahans()->get();
+
+        foreach ($bahans as $b) {
             $recipeQtyInBaseUnit = (float)($b->pivot->quantity ?? 1);
             $costPerBaseUnit = (float)$b->cost_per_base_unit;
             $totalCost += ($recipeQtyInBaseUnit * $costPerBaseUnit);

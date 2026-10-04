@@ -18,6 +18,8 @@ class Overhead extends Model
         'nominal_monthly',
         'status',
         'notes',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [
@@ -38,13 +40,14 @@ class Overhead extends Model
     }
 
     /**
-     * Get Overhead Cost per Cup based on active monthly target sales
+     * Get Overhead Cost per Cup based on active monthly target cup sales
      */
-    public static function getCostPerCup()
+    public static function getCostPerCup($year = null)
     {
-        $target = TargetSale::getTargetSettings();
-        if ($target->target_sales_monthly > 0) {
-            return round(static::getTotalActiveNominal() / $target->target_sales_monthly, 4);
+        $target = TargetSale::getTargetSettings($year);
+        $targetCups = $target->getTargetCupsMonthly();
+        if ($targetCups > 0) {
+            return round(static::getTotalActiveNominal() / $targetCups, 4);
         }
         return 0;
     }
@@ -52,8 +55,8 @@ class Overhead extends Model
     /**
      * Get Total Non-Material Cost per Cup (Labor per Cup + Overhead per Cup)
      */
-    public static function getTotalNonMaterialCostPerCup()
+    public static function getTotalNonMaterialCostPerCup($year = null)
     {
-        return Labor::getCostPerCup() + static::getCostPerCup();
+        return Labor::getCostPerCup($year) + static::getCostPerCup($year);
     }
 }

@@ -31,6 +31,8 @@ class Bahan extends Model
 
             if ($basePurchaseQty > 0 && !is_null($bahan->price) && (float)$bahan->price > 0) {
                 $bahan->attributes['cost_per_base_unit'] = (float)$bahan->price / $basePurchaseQty;
+            } elseif (isset($bahan->attributes['cost_per_base_unit']) && (float)$bahan->attributes['cost_per_base_unit'] > 0) {
+                // Keep explicitly set cost_per_base_unit
             } else {
                 $bahan->attributes['cost_per_base_unit'] = 0;
             }
@@ -59,7 +61,7 @@ class Bahan extends Model
      */
     public function hasValidPrice()
     {
-        return !is_null($this->price) && (float)$this->price > 0;
+        return (!is_null($this->price) && (float)$this->price > 0) || (float)($this->attributes['cost_per_base_unit'] ?? 0) > 0;
     }
 
     /**
@@ -76,7 +78,7 @@ class Bahan extends Model
         if ($basePurchaseQty > 0 && !is_null($this->price) && (float)$this->price > 0) {
             return (float)$this->price / $basePurchaseQty;
         }
-        return 0;
+        return (float)($this->attributes['cost_per_base_unit'] ?? 0);
     }
 
     /**

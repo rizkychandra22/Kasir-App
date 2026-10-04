@@ -10,6 +10,9 @@ use App\Models\Shopping;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 
+use App\Services\SalesProfitService;
+use Illuminate\Http\Request;
+
 class PdfController extends Controller
 {
     public function struckShopping($id)
@@ -51,29 +54,51 @@ class PdfController extends Controller
         return Excel::download(new xlsReportProduct(), 'Data-Produk.xlsx');
     }
 
-    public function dataShopping()
+    public function dataShopping(Request $request = null)
     {
-        $data = Shopping::with(['user', 'details.product'])->latest()->get();
+        $request = $request ?? request();
+        $startDate = $request->input('start_date') ?? $request->input('from_date');
+        $endDate = $request->input('end_date') ?? $request->input('to_date');
+
+        $data = SalesProfitService::getSalesData($startDate, $endDate);
+        $summary = SalesProfitService::getSummaryData($data, $startDate, $endDate);
+
         $pdf = Pdf::loadView('pdf.data-shopping', [
                     'data' => $data,
+                    'summary' => $summary,
                     'isPdf' => true,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
                 ])
                 ->setPaper('a4', 'portrait');
 
         return $pdf->stream('Data-Penjualan.pdf');
     }
 
-    public function printDataShopping()
+    public function printDataShopping(Request $request = null)
     {
-        $data = Shopping::with(['user', 'details.product'])->latest()->get();
+        $request = $request ?? request();
+        $startDate = $request->input('start_date') ?? $request->input('from_date');
+        $endDate = $request->input('end_date') ?? $request->input('to_date');
+
+        $data = SalesProfitService::getSalesData($startDate, $endDate);
+        $summary = SalesProfitService::getSummaryData($data, $startDate, $endDate);
+
         return view('pdf.data-shopping', [
             'data' => $data,
+            'summary' => $summary,
             'isPdf' => false,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
 
-    public function dataShoppingExcel()
+    public function dataShoppingExcel(Request $request = null)
     {
-        return Excel::download(new xlsReportShopping(), 'Data-Penjualan.xlsx');
+        $request = $request ?? request();
+        $startDate = $request->input('start_date') ?? $request->input('from_date');
+        $endDate = $request->input('end_date') ?? $request->input('to_date');
+
+        return Excel::download(new xlsReportShopping($startDate, $endDate), 'Data-Penjualan.xlsx');
     }
 }

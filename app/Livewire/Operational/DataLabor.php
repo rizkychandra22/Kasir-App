@@ -118,10 +118,10 @@ class DataLabor extends Component
     public function render()
     {
         $target = TargetSale::getTargetSettings();
-        $targetMonthly = (float)$target->target_sales_monthly;
+        $targetMonthly = $target->getTargetCupsMonthly();
 
         $totalActiveSalary = Labor::getTotalActiveSalary();
-        $laborCostPerCup = $targetMonthly > 0 ? round($totalActiveSalary / $targetMonthly, 2) : 0;
+        $laborCostPerCup = Labor::getCostPerCup();
 
         $labors = Labor::when($this->search, function ($query) {
             $query->where('name', 'like', '%' . $this->search . '%')

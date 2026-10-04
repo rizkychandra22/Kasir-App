@@ -92,4 +92,12 @@ class UnitConversionService
         // amount * fromFactor = baseAmount; baseAmount / toFactor = targetAmount
         return ((float)$amount * $fromFactor) / $toFactor;
     }
+
+    /**
+     * Alias for convertBetweenUnits
+     */
+    public static function convert($amount, $fromUnit, $toUnit)
+    {
+        return self::convertBetweenUnits($amount, $fromUnit, $toUnit);
+    }
 }

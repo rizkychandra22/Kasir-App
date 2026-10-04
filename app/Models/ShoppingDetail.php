@@ -13,6 +13,8 @@ class ShoppingDetail extends Model
         'price',
         'subtotal',
         'material_cost',
+        'created_at',
+        'updated_at',
     ];
 
     public function shopping()

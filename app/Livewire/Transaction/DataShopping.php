@@ -17,6 +17,7 @@ class DataShopping extends Component
     public $cart = []; 
     public $search_prd;
     public $sales_type = 'offline'; // 'offline' or 'online'
+    public $payment_method = 'cash'; // 'cash' or 'qris'
     public $pay = 0;
     public $total_price = 0;
     public $change = 0;
@@ -40,10 +41,24 @@ class DataShopping extends Component
     {
         $this->cart = [];
         $this->search_prd = '';
+        $this->payment_method = 'cash';
         $this->pay = 0;
         $this->total_price = 0;
         $this->change = 0;
         $this->resetValidation();
+    }
+
+    public function setPaymentMethod($method)
+    {
+        if (!in_array($method, ['cash', 'qris'])) return;
+        $this->payment_method = $method;
+
+        if ($method === 'qris') {
+            $this->pay = (int)$this->total_price;
+            $this->change = 0;
+        } else {
+            $this->updatedPay();
+        }
     }
 
     public function setSalesType($type)
@@ -58,6 +73,7 @@ class DataShopping extends Component
                     session()->flash('danger', "Harga online untuk produk {$product->name_prd} belum diatur.");
                 }
             }
+            $this->payment_method = 'cash';
         }
 
         $this->sales_type = $type;
@@ -119,21 +135,43 @@ class DataShopping extends Component
             return $item['price'] * $item['qty'];
         }, $this->cart));
         
-        $this->updatedPay();
+        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+            $this->pay = (int)$this->total_price;
+            $this->change = 0;
+        } else {
+            $this->updatedPay();
+        }
     }
 
     public function updatedPay()
     {
-        $this->change = (int)$this->pay - (int)$this->total_price;
+        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+            $this->pay = (int)$this->total_price;
+            $this->change = 0;
+        } else {
+            $this->change = (int)$this->pay - (int)$this->total_price;
+        }
     }
 
     public function store()
     {
         if (empty($this->cart)) return;
-        $this->validate([
+
+        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+            $this->pay = (int)$this->total_price;
+            $this->change = 0;
+        }
+
+        $rules = [
             'pay' => 'required|numeric|min:' . $this->total_price,
             'sales_type' => 'required|in:online,offline',
-        ]);
+        ];
+
+        if ($this->sales_type === 'offline') {
+            $rules['payment_method'] = 'required|in:cash,qris';
+        }
+
+        $this->validate($rules);
 
         // 1. VALIDASI STOK BAHAN TERLEBIH DAHULU BEFORE TRANSACTION
         $requiredMaterials = []; // bahan_id => required_qty_in_base_unit
@@ -177,6 +215,7 @@ class DataShopping extends Component
                 $shopping = Shopping::create([
                     'invoice' => $invoice,
                     'sales_type' => $this->sales_type,
+                    'payment_method' => $this->sales_type === 'offline' ? $this->payment_method : 'cash',
                     'user_id' => Auth::user()->id,
                     'total_price' => (int)$this->total_price,
                     'pay' => (int)$this->pay,
