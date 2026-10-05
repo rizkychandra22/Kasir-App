@@ -26,23 +26,21 @@
 
             <div class="col-lg-12 col-md-12 col-12 col-sm-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4>{{ $content }}</h4>
-                        </div>
+                    <div class="card-header">
+                        <h4>{{ $content }}</h4>
                         <div class="card-header-action">
                             <div class="d-flex align-items-center">
                                 <label class="mr-2 mb-0 font-weight-bold text-muted small"><i class="fas fa-calendar-alt mr-1"></i>Pilih Tahun:</label>
-                                <select wire:model.live="year" class="form-control form-control-sm mr-3 font-weight-bold" style="width: 110px;">
+                                <select wire:model.live="year" class="form-control form-control-sm mr-3 font-weight-bold" style="width: 82px; height: 31px; font-size: 12px; border-radius: 30px; padding: 2px 8px;">
                                     @foreach ($availableYears as $yr)
                                         <option value="{{ $yr }}">{{ $yr }}</option>
                                     @endforeach
                                 </select>
                                 <div class="btn-group">
-                                    <a href="{{ route('kasir.labor') }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('kasir.labor') }}" class="btn btn-primary">
                                         <i class="fas fa-users mr-1"></i> Tenaga Kerja
                                     </a>
-                                    <a href="{{ route('kasir.overhead') }}" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('kasir.overhead') }}" class="btn btn-warning">
                                         <i class="fas fa-file-invoice-dollar mr-1"></i> Biaya Operasional
                                     </a>
                                 </div>
@@ -353,8 +351,8 @@
                                                         <div class="d-flex align-items-center justify-content-center">
                                                             <div class="progress mr-2" style="width: 80px; height: 10px;">
                                                                 <div class="progress-bar bg-{{ $m['sales_achievement_percent'] >= 100 ? 'success' : ($m['sales_achievement_percent'] >= 75 ? 'primary' : ($m['sales_achievement_percent'] >= 50 ? 'warning' : 'danger')) }}" 
-                                                                     role="progressbar" 
-                                                                     style="width: {{ min(100, $m['sales_achievement_percent']) }}%">
+                                                                    role="progressbar" 
+                                                                    style=`width: {{ min(100, $m['sales_achievement_percent']) }}%`>
                                                                 </div>
                                                             </div>
                                                             <span class="badge badge-light font-weight-bold">{{ number_format($m['sales_achievement_percent'], 1, ',', '.') }}%</span>
@@ -366,8 +364,8 @@
                                                         <div class="d-flex align-items-center justify-content-center">
                                                             <div class="progress mr-2" style="width: 80px; height: 10px;">
                                                                 <div class="progress-bar bg-{{ $m['cups_achievement_percent'] >= 100 ? 'success' : ($m['cups_achievement_percent'] >= 75 ? 'primary' : ($m['cups_achievement_percent'] >= 50 ? 'warning' : 'danger')) }}" 
-                                                                     role="progressbar" 
-                                                                     style="width: {{ min(100, $m['cups_achievement_percent']) }}%">
+                                                                    role="progressbar" 
+                                                                    style=`width: {{ min(100, $m['cups_achievement_percent']) }}%`>
                                                                 </div>
                                                             </div>
                                                             <span class="badge badge-light font-weight-bold">{{ number_format($m['cups_achievement_percent'], 1, ',', '.') }}%</span>
