@@ -1,5 +1,11 @@
 <p align="center">
-  <img src="public/!template-stisla/dist/assets/img/stisla-fill.svg" width="90" alt="KasirApp Logo">
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="220" alt="Laravel Logo" style="vertical-align: middle;">
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://getstisla.com" target="_blank">
+    <img src="public/!template-stisla/dist/assets/img/stisla-fill.svg" width="65" alt="Stisla Logo" style="vertical-align: middle;">
+  </a>
 </p>
 
 <h1 align="center">KasirApp - Point of Sale (POS) & Financial Management System</h1>
