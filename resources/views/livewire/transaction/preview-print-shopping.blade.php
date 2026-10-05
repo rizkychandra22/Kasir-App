@@ -68,7 +68,11 @@
                                             <td class="font-weight-bold text-primary">{{ $item->invoice }}</td>
                                             <td class="text-center">
                                                 @if(($item->sales_type ?? 'offline') === 'online')
-                                                    <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE</span>
+                                                    @if(($item->payment_method ?? 'cash') === 'qris')
+                                                        <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE (QRIS)</span>
+                                                    @else
+                                                        <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE (CASH)</span>
+                                                    @endif
                                                 @elseif(($item->payment_method ?? 'cash') === 'qris')
                                                     <span class="badge badge-info"><i class="fas fa-qrcode mr-1"></i> OFFLINE (QRIS)</span>
                                                 @else

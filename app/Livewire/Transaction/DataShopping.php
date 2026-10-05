@@ -136,7 +136,7 @@ class DataShopping extends Component
             return $item['price'] * $item['qty'];
         }, $this->cart));
         
-        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+        if ($this->payment_method === 'qris') {
             $this->pay = (int)$this->total_price;
             $this->change = 0;
         } else {
@@ -146,7 +146,7 @@ class DataShopping extends Component
 
     public function updatedPay()
     {
-        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+        if ($this->payment_method === 'qris') {
             $this->pay = (int)$this->total_price;
             $this->change = 0;
         } else {
@@ -158,7 +158,7 @@ class DataShopping extends Component
     {
         if (empty($this->cart)) return;
 
-        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+        if ($this->payment_method === 'qris') {
             $this->pay = (int)$this->total_price;
             $this->change = 0;
         }
@@ -166,11 +166,8 @@ class DataShopping extends Component
         $rules = [
             'pay' => 'required|numeric|min:' . $this->total_price,
             'sales_type' => 'required|in:online,offline',
+            'payment_method' => 'required|in:cash,qris',
         ];
-
-        if ($this->sales_type === 'offline') {
-            $rules['payment_method'] = 'required|in:cash,qris';
-        }
 
         $this->validate($rules);
 
@@ -216,7 +213,7 @@ class DataShopping extends Component
                 $shopping = Shopping::create([
                     'invoice' => $invoice,
                     'sales_type' => $this->sales_type,
-                    'payment_method' => $this->sales_type === 'offline' ? $this->payment_method : 'cash',
+                    'payment_method' => $this->payment_method,
                     'user_id' => Auth::user()->id,
                     'total_price' => (int)$this->total_price,
                     'pay' => (int)$this->pay,
