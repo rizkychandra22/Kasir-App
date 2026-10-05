@@ -19,7 +19,7 @@ class HppProduct extends Component
     public $subpage = 'HPP & Margin Produk';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Index Data';
+    public $content = 'View Data HPP Produk';
 
     public function mount()
     {
@@ -27,7 +27,7 @@ class HppProduct extends Component
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
         $this->subpage = 'HPP & Margin Produk';
         $this->linkSubpage = route('kasir.hpp-product');
-        $this->content = 'Index Data';
+        $this->content = 'View Data HPP Produk';
     }
 
     public $search = '';

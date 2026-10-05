@@ -78,7 +78,7 @@
                         <li class="menu-header">Menu Utama {{ Auth::user()->role }}</li>
                         <li class="{{ Route::is('kasir.bahan') ? 'active' : '' }}">
                             <a href="{{ route('kasir.bahan') }}" class="nav-link">
-                                <i class="fas fa-seedling"></i> <span>Data Master Bahan</span>
+                                <i class="fas fa-seedling"></i> <span>Data Bahan Baku</span>
                             </a>
                         </li>
                         <li class="{{ Route::is(['kasir.product', 'kasir.product.export', 'kasir.category']) ? 'active' : '' }}">

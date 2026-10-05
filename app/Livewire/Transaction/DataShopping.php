@@ -7,7 +7,6 @@ use App\Models\BahanStockMovement;
 use App\Models\Product;
 use App\Models\Shopping;
 use App\Models\ShoppingDetail;
-use App\Services\UnitConversionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -27,7 +26,7 @@ class DataShopping extends Component
     public $subpage = 'Data Penjualan';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Index Data';
+    public $content = 'View Data Penjualan';
 
     public function mount()
     {
@@ -35,7 +34,7 @@ class DataShopping extends Component
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
         $this->subpage = 'Data Penjualan';
         $this->linkSubpage = route('kasir.shopping');
-        $this->content = 'Index Data';
+        $this->content = 'View Data Penjualan';
     }
 
     public function resetInput()

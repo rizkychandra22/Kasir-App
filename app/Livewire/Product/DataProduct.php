@@ -22,7 +22,7 @@ class DataProduct extends Component
     public $subpage = 'Data Produk';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Index Data';
+    public $content = 'View Data Produk';
 
     public function mount()
     {
@@ -30,7 +30,7 @@ class DataProduct extends Component
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
         $this->subpage = 'Data Produk';
         $this->linkSubpage = route('kasir.product');
-        $this->content = 'Index Data';
+        $this->content = 'View Data Produk';
     }
 
     public function updatedNamePrd($value)

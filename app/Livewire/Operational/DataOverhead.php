@@ -18,7 +18,7 @@ class DataOverhead extends Component
     public $subpage = 'Biaya Operasional';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Index Data';
+    public $content = 'View Data Biaya Operasional';
 
     public $overheadId;
     public $name;
@@ -33,7 +33,7 @@ class DataOverhead extends Component
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
         $this->subpage = 'Biaya Operasional';
         $this->linkSubpage = route('kasir.overhead');
-        $this->content = 'Index Data';
+        $this->content = 'View Data Biaya Operasional';
     }
 
     public $isEdit = false;

@@ -14,7 +14,7 @@ class DataCategory extends Component
     public $title = 'Dashboard';
     public $subpage = 'Data Produk';
     public $page = 'Kategori Produk';
-    public $content = 'Index Data';
+    public $content = 'View Data Kategori Produk';
     public $linkTitle;
     public $linkSubpage;
     public $linkPage;
@@ -27,7 +27,7 @@ class DataCategory extends Component
         $this->linkSubpage = route('kasir.product');
         $this->page = 'Kategori Produk';
         $this->linkPage = route('kasir.category');
-        $this->content = 'Index Data';
+        $this->content = 'View Data Kategori Produk';
     }
 
     public function updatedName($value)

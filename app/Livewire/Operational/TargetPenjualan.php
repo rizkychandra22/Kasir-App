@@ -14,7 +14,7 @@ class TargetPenjualan extends Component
     public $subpage = 'Target Penjualan';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Index Data';
+    public $content = 'View Data Target Penjualan';
 
     public $year;
     public $annual_sales_target = 100000000;
@@ -55,7 +55,7 @@ class TargetPenjualan extends Component
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
         $this->subpage = 'Target Penjualan';
         $this->linkSubpage = route('kasir.target-penjualan');
-        $this->content = 'Index Data';
+        $this->content = 'View Data Target Penjualan';
 
         $this->year = (int)date('Y');
         $this->loadTargetForYear();

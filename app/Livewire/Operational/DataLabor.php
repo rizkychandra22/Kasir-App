@@ -18,7 +18,7 @@ class DataLabor extends Component
     public $subpage = 'Data Tenaga Kerja';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Index Data';
+    public $content = 'View Data Posisi Kerja';
 
     public $laborId;
     public $name;
@@ -32,7 +32,7 @@ class DataLabor extends Component
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
         $this->subpage = 'Data Tenaga Kerja';
         $this->linkSubpage = route('kasir.labor');
-        $this->content = 'Index Data';
+        $this->content = 'View Data Posisi Kerja';
     }
 
     public $isEdit = false;
