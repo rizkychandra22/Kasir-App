@@ -10,8 +10,11 @@ use Livewire\Component;
 
 class TargetPenjualan extends Component
 {
+    public $title = 'Dashboard';
     public $subpage = 'Target Penjualan';
-    public $content = 'Target Penjualan Tahunan + Target Bulanan & Pencapaian';
+    public $linkTitle;
+    public $linkSubpage;
+    public $content = 'Index Data';
 
     public $year;
     public $annual_sales_target = 100000000;
@@ -48,6 +51,12 @@ class TargetPenjualan extends Component
 
     public function mount()
     {
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = 'Target Penjualan';
+        $this->linkSubpage = route('kasir.target-penjualan');
+        $this->content = 'Index Data';
+
         $this->year = (int)date('Y');
         $this->loadTargetForYear();
     }

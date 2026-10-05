@@ -14,8 +14,11 @@ class DataOverhead extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $subpage = 'Data Biaya Operasional / Overhead';
-    public $content = 'Kelola Biaya Operasional & Alokasi Overhead per Cup';
+    public $title = 'Dashboard';
+    public $subpage = 'Biaya Operasional';
+    public $linkTitle;
+    public $linkSubpage;
+    public $content = 'Index Data';
 
     public $overheadId;
     public $name;
@@ -23,6 +26,15 @@ class DataOverhead extends Component
     public $nominal_monthly;
     public $status = 'active';
     public $notes;
+
+    public function mount()
+    {
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = 'Biaya Operasional';
+        $this->linkSubpage = route('kasir.overhead');
+        $this->content = 'Index Data';
+    }
 
     public $isEdit = false;
     public $search = '';
