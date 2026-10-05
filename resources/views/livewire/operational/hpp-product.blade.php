@@ -70,14 +70,14 @@
                         {{-- TABEL MASTER HPP PRODUK --}}
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped table-hover">
-                                <thead class="bg-primary text-white">
+                                <thead class="thead-light">
                                     <tr>
                                         <th class="text-center" style="width: 4%">#</th>
                                         <th>Nama Produk</th>
                                         <th class="text-right">HPP Bahan</th>
                                         <th class="text-right">Labor/Cup</th>
                                         <th class="text-right">Overhead/Cup</th>
-                                        <th class="text-right bg-info text-white">HPP TOTAL</th>
+                                        <th class="text-right font-weight-bold text-primary">HPP TOTAL</th>
                                         <th class="text-right">Harga Offline</th>
                                         <th class="text-center">Margin Off</th>
                                         <th class="text-right">Harga Online</th>

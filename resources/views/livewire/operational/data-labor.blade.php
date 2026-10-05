@@ -146,7 +146,7 @@
 
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped table-hover">
-                                        <thead class="bg-primary text-white">
+                                        <thead class="thead-light">
                                             <tr>
                                                 <th class="text-center" style="width: 5%">#</th>
                                                 <th>Nama / Posisi</th>

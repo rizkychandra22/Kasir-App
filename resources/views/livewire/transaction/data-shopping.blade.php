@@ -76,7 +76,7 @@
                     <div class="card-body">
                         <div class="table-responsive" wire:poll.5s>
                             <table class="table table-bordered table-hover">
-                                <thead class="thead-dark">
+                                <thead class="thead-light">
                                     <tr>
                                         <th width="50">#</th>
                                         <th>No. Invoice</th>
