@@ -13,27 +13,34 @@ class DataProduct extends Component
 {
     public $category_id, $name_prd, $code_prd, $description_prd, $price, $price_online, $price_offline;
     public $sales_type = 'all'; // 'online', 'offline', 'all'
-    public $productId; 
+    public $productId;
 
     // Dynamic composition items: array of ['bahan_id' => ..., 'quantity' => ..., 'unit' => ...]
     public $compositions = [];
 
     public $title = 'Dashboard';
-    public $subpage = 'Overview Kasir';
+    public $subpage = 'Data Produk';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Daftar Produk';
+    public $content = 'View Data Produk';
 
     public function mount()
     {
         $isAdmin = Auth::user()->role == 'Admin';
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
-        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
+        $this->subpage = 'Data Produk';
         $this->linkSubpage = route('kasir.product');
+        $this->content = 'View Data Produk';
     }
 
-    public function updatedNamePrd($value) { $this->generateCode($value, $this->category_id); }
-    public function updatedCategoryId($value) { $this->generateCode($this->name_prd, $value); }
+    public function updatedNamePrd($value)
+    {
+        $this->generateCode($value, $this->category_id);
+    }
+    public function updatedCategoryId($value)
+    {
+        $this->generateCode($this->name_prd, $value);
+    }
 
     public function addCompositionRow()
     {
@@ -175,7 +182,7 @@ class DataProduct extends Component
             'category_id' => $this->category_id,
             'user_id' => Auth::user()->id,
             'name_prd' => $this->name_prd,
-            'code_prd' => $this->code_prd, 
+            'code_prd' => $this->code_prd,
             'description_prd' => $this->description_prd,
             'sales_type' => $this->sales_type,
             'price_online' => $this->price_online !== '' ? (int)$this->price_online : null,
@@ -189,7 +196,7 @@ class DataProduct extends Component
 
         session()->flash('success', 'Produk berhasil ditambahkan!');
         $this->resetInput();
-        $this->dispatch('close-modal'); 
+        $this->dispatch('close-modal');
     }
 
     public function edit($id)

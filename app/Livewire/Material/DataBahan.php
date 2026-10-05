@@ -20,17 +20,18 @@ class DataBahan extends Component
     public $selectedBahanForHistory, $selectedBahanForDetail;
 
     public $title = 'Dashboard';
-    public $subpage = 'Overview Kasir';
+    public $subpage = 'Data Bahan Baku';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Master Data Bahan';
+    public $content = 'View Bahan Baku';
 
     public function mount()
     {
         $isAdmin = Auth::user()->role == 'Admin';
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
-        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
+        $this->subpage = 'Data Bahan Baku';
         $this->linkSubpage = route('kasir.bahan');
+        $this->content = 'View Bahan Baku';
         $this->calculateStockFromPurchase();
     }
 
@@ -114,7 +115,7 @@ class DataBahan extends Component
             ]);
         }
 
-        session()->flash('success', "Master Bahan {$this->name_bahan} berhasil ditambahkan! Stok awal: {$baseStock} {$baseUnit}.");
+        session()->flash('success', "Bahan Baku {$this->name_bahan} berhasil ditambahkan! Stok awal: {$baseStock} {$baseUnit}.");
         $this->resetInput();
         $this->dispatch('close-modal');
     }
@@ -182,7 +183,7 @@ class DataBahan extends Component
             ]);
         }
 
-        session()->flash('success', "Master Bahan {$this->name_bahan} berhasil diperbarui!");
+        session()->flash('success', "Bahan Baku {$this->name_bahan} berhasil diperbarui!");
         $this->resetInput();
         $this->dispatch('close-modal');
     }
@@ -277,7 +278,7 @@ class DataBahan extends Component
         }
 
         $bahan->delete();
-        session()->flash('danger', 'Master Bahan berhasil dihapus.');
+        session()->flash('danger', 'Bahan Baku berhasil dihapus.');
     }
 
     public function render()

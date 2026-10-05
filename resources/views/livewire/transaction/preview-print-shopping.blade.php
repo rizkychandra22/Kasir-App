@@ -68,7 +68,11 @@
                                             <td class="font-weight-bold text-primary">{{ $item->invoice }}</td>
                                             <td class="text-center">
                                                 @if(($item->sales_type ?? 'offline') === 'online')
-                                                    <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE</span>
+                                                    @if(($item->payment_method ?? 'cash') === 'qris')
+                                                        <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE (QRIS)</span>
+                                                    @else
+                                                        <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE (CASH)</span>
+                                                    @endif
                                                 @elseif(($item->payment_method ?? 'cash') === 'qris')
                                                     <span class="badge badge-info"><i class="fas fa-qrcode mr-1"></i> OFFLINE (QRIS)</span>
                                                 @else
@@ -117,61 +121,71 @@
                         </div>
 
                         <!-- Ringkasan Keuangan Section -->
-                        <div class="row mt-4 justify-content-end">
-                            <div class="col-lg-6 col-md-8 col-sm-12">
-                                <div class="card border border-primary">
-                                    <div class="card-header bg-primary text-white py-2">
-                                        <h5 class="m-0 font-weight-bold text-white"><i class="fas fa-chart-line mr-2"></i>RINGKASAN KEUANGAN</h5>
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card border border-primary shadow-sm">
+                                    <div class="card-header bg-primary text-white" style="min-height: auto; padding: 15px 15px;">
+                                        <h6 class="m-0 font-weight-bold text-white" style="font-size: 15px; letter-spacing: 0.5px;"><i class="fas fa-chart-line mr-2"></i>RINGKASAN KEUANGAN</h6>
                                     </div>
                                     <div class="card-body p-0">
-                                        <table class="table table-sm table-striped m-0">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="pl-3 font-weight-bold">Total Transaksi</td>
-                                                    <td class="text-right pr-3 font-weight-bold">{{ $summary['total_transactions'] }} Transaksi</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-3 font-weight-bold">Total Omzet</td>
-                                                    <td class="text-right pr-3 font-weight-bold text-primary">Rp{{ number_format($summary['total_omzet'], 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-4 text-muted small"><i class="fas fa-money-bill-wave mr-1"></i> Penjualan Cash</td>
-                                                    <td class="text-right pr-3 text-muted small font-weight-bold">Rp{{ number_format($summary['penjualan_cash'] ?? 0, 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-4 text-muted small"><i class="fas fa-qrcode mr-1"></i> Penjualan QRIS</td>
-                                                    <td class="text-right pr-3 text-muted small font-weight-bold">Rp{{ number_format($summary['penjualan_qris'] ?? 0, 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-4 text-muted small"><i class="fas fa-globe mr-1"></i> Penjualan Online</td>
-                                                    <td class="text-right pr-3 text-muted small font-weight-bold">Rp{{ number_format($summary['penjualan_online'] ?? 0, 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-3 font-weight-bold">Total HPP</td>
-                                                    <td class="text-right pr-3 font-weight-bold text-secondary">Rp{{ number_format($summary['total_hpp'], 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-3 font-weight-bold">Laba Kotor</td>
-                                                    <td class="text-right pr-3 font-weight-bold text-success">Rp{{ number_format($summary['laba_kotor'], 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-3 font-weight-bold">Margin Laba Kotor</td>
-                                                    <td class="text-right pr-3 font-weight-bold text-success">{{ number_format($summary['margin_laba_kotor'], 2, ',', '.') }}%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="pl-3 font-weight-bold">Total Pengeluaran</td>
-                                                    <td class="text-right pr-3 font-weight-bold text-danger">Rp{{ number_format($summary['total_pengeluaran'], 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr class="table-success">
-                                                    <td class="pl-3 font-weight-bold h6 m-0">Laba Bersih</td>
-                                                    <td class="text-right pr-3 font-weight-bold h6 m-0 text-success">Rp{{ number_format($summary['laba_bersih'], 0, ',', '.') }}</td>
-                                                </tr>
-                                                <tr class="table-success">
-                                                    <td class="pl-3 font-weight-bold h6 m-0">Margin Laba Bersih</td>
-                                                    <td class="text-right pr-3 font-weight-bold h6 m-0 text-success">{{ number_format($summary['margin_laba_bersih'], 2, ',', '.') }}%</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <div class="row no-gutters">
+                                            <div class="col-md-6 border-right">
+                                                <table class="table table-sm table-striped m-0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="pl-3 font-weight-bold">Total Transaksi</td>
+                                                            <td class="text-right pr-3 font-weight-bold">{{ $summary['total_transactions'] }} Transaksi</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-3 font-weight-bold">Total Omzet</td>
+                                                            <td class="text-right pr-3 font-weight-bold text-primary">Rp{{ number_format($summary['total_omzet'], 0, ',', '.') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-4 text-muted small"><i class="fas fa-money-bill-wave mr-1"></i> Penjualan Cash</td>
+                                                            <td class="text-right pr-3 text-muted small font-weight-bold">Rp{{ number_format($summary['penjualan_cash'] ?? 0, 0, ',', '.') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-4 text-muted small"><i class="fas fa-qrcode mr-1"></i> Penjualan QRIS</td>
+                                                            <td class="text-right pr-3 text-muted small font-weight-bold">Rp{{ number_format($summary['penjualan_qris'] ?? 0, 0, ',', '.') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-4 text-muted small"><i class="fas fa-globe mr-1"></i> Penjualan Online</td>
+                                                            <td class="text-right pr-3 text-muted small font-weight-bold">Rp{{ number_format($summary['penjualan_online'] ?? 0, 0, ',', '.') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-3 font-weight-bold">Total HPP</td>
+                                                            <td class="text-right pr-3 font-weight-bold text-secondary">Rp{{ number_format($summary['total_hpp'], 0, ',', '.') }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <table class="table table-sm table-striped m-0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="pl-3 font-weight-bold">Laba Kotor</td>
+                                                            <td class="text-right pr-3 font-weight-bold text-success">Rp{{ number_format($summary['laba_kotor'], 0, ',', '.') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-3 font-weight-bold">Margin Laba Kotor</td>
+                                                            <td class="text-right pr-3 font-weight-bold text-success">{{ number_format($summary['margin_laba_kotor'], 2, ',', '.') }}%</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-3 font-weight-bold">Total Pengeluaran</td>
+                                                            <td class="text-right pr-3 font-weight-bold text-danger">Rp{{ number_format($summary['total_pengeluaran'], 0, ',', '.') }}</td>
+                                                        </tr>
+                                                        <tr class="table-success">
+                                                            <td class="pl-3 font-weight-bold h6 m-0">Laba Bersih</td>
+                                                            <td class="text-right pr-3 font-weight-bold h6 m-0 text-success">Rp{{ number_format($summary['laba_bersih'], 0, ',', '.') }}</td>
+                                                        </tr>
+                                                        <tr class="table-success">
+                                                            <td class="pl-3 font-weight-bold h6 m-0">Margin Laba Bersih</td>
+                                                            <td class="text-right pr-3 font-weight-bold h6 m-0 text-success">{{ number_format($summary['margin_laba_bersih'], 2, ',', '.') }}%</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -30,12 +30,6 @@
                         <h4>{{ $content }}</h4>
                         <div class="card-header-action">
                             <div class="btn-group">
-                                <a href="{{ route('kasir.hpp-product') }}" class="btn btn-primary">
-                                    <i class="fas fa-calculator mr-1"></i> HPP & Margin
-                                </a>
-                                <a href="{{ route('kasir.bahan') }}" class="btn btn-info">
-                                    <i class="fas fa-seedling mr-1"></i> Master Bahan
-                                </a>
                                 <a href="{{ route('kasir.category') }}" class="btn btn-danger">
                                     <i class="fas fa-list mr-1"></i> Kategori
                                 </a>

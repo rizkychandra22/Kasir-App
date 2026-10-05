@@ -9,10 +9,12 @@ use Livewire\Component;
 class PreviewPrintShopping extends Component
 {
     public $title = 'Dashboard';
-    public $subpage = 'Overview Kasir';
+    public $subpage = 'Data Penjualan';
+    public $page = 'Export Data Penjualan';
+    public $content = 'Index Export';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Export Data Penjualan';
+    public $linkPage;
 
     public $start_date;
     public $end_date;
@@ -26,8 +28,11 @@ class PreviewPrintShopping extends Component
     {
         $isAdmin = Auth::user()->role == 'Admin';
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
-        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
-        $this->linkSubpage = route('kasir.shopping.export');
+        $this->subpage = 'Data Penjualan';
+        $this->linkSubpage = route('kasir.shopping');
+        $this->page = 'Export Data Penjualan';
+        $this->linkPage = route('kasir.shopping.export');
+        $this->content = 'Index Export';
 
         $this->start_date = request()->query('start_date') ?? request()->query('from_date') ?? $this->start_date;
         $this->end_date = request()->query('end_date') ?? request()->query('to_date') ?? $this->end_date;
@@ -49,6 +54,7 @@ class PreviewPrintShopping extends Component
             'summary'   => $summary,
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,
+            'page'    => $this->page,
             'content' => $this->content,
         ]);
     }

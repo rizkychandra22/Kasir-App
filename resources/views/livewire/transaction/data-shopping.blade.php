@@ -76,7 +76,7 @@
                     <div class="card-body">
                         <div class="table-responsive" wire:poll.5s>
                             <table class="table table-bordered table-hover">
-                                <thead class="thead-dark">
+                                <thead class="thead-light">
                                     <tr>
                                         <th width="50">#</th>
                                         <th>No. Invoice</th>
@@ -96,7 +96,11 @@
                                             <td><span class="badge badge-primary">{{ $item->invoice }}</span></td>
                                             <td class="text-center">
                                                 @if(($item->sales_type ?? 'offline') === 'online')
-                                                    <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE</span>
+                                                    @if(($item->payment_method ?? 'cash') === 'qris')
+                                                        <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE (QRIS)</span>
+                                                    @else
+                                                        <span class="badge badge-success"><i class="fas fa-globe mr-1"></i> ONLINE (CASH)</span>
+                                                    @endif
                                                 @elseif(($item->payment_method ?? 'cash') === 'qris')
                                                     <span class="badge badge-info"><i class="fas fa-qrcode mr-1"></i> OFFLINE (QRIS)</span>
                                                 @else
@@ -158,15 +162,16 @@
                 <div class="modal-body">
                     {{-- SELECTOR TIPE PENJUALAN --}}
                     <div class="card bg-light border mb-3">
-                        <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                        <div class="card-body p-2 d-flex justify-content-between align-items-center flex-wrap" style="gap: 8px;">
                             <span class="font-weight-bold text-dark"><i class="fas fa-tag mr-1 text-warning"></i> Pilih Tipe Penjualan:</span>
-                            <div class="btn-group">
+                            <div class="d-inline-flex p-1 bg-white border rounded shadow-sm" style="gap: 4px;">
                                 <button type="button" 
                                         wire:click="setSalesType('offline')"
                                         @if(count($cart) > 0 && $sales_type !== 'offline') 
                                             wire:confirm="Anda akan mengubah tipe penjualan dari ONLINE ke OFFLINE. Harga produk di keranjang akan disesuaikan. Lanjutkan?" 
                                         @endif
-                                        class="btn btn-sm {{ $sales_type === 'offline' ? 'btn-secondary font-weight-bold active' : 'btn-outline-secondary' }}">
+                                        class="btn btn-sm px-3 font-weight-bold {{ $sales_type === 'offline' ? 'btn-primary text-white shadow-sm' : 'text-muted bg-transparent border-0' }}"
+                                        style="border-radius: 6px; transition: all 0.2s ease;">
                                     <i class="fas fa-store mr-1"></i> Penjualan Offline
                                 </button>
                                 <button type="button" 
@@ -174,7 +179,8 @@
                                         @if(count($cart) > 0 && $sales_type !== 'online') 
                                             wire:confirm="Anda akan mengubah tipe penjualan dari OFFLINE ke ONLINE. Harga produk di keranjang akan disesuaikan. Lanjutkan?" 
                                         @endif
-                                        class="btn btn-sm {{ $sales_type === 'online' ? 'btn-success font-weight-bold active' : 'btn-outline-success' }}">
+                                        class="btn btn-sm px-3 font-weight-bold {{ $sales_type === 'online' ? 'btn-success text-white shadow-sm' : 'text-muted bg-transparent border-0' }}"
+                                        style="border-radius: 6px; transition: all 0.2s ease;">
                                     <i class="fas fa-globe mr-1"></i> Penjualan Online
                                 </button>
                             </div>
@@ -269,26 +275,24 @@
                             </div>
 
                             <div class="mt-3 p-3 rounded shadow-sm" style="background: #2d3436; color: #fff;">
-                                {{-- Pilihan Metode Pembayaran Khusus Transaksi Offline --}}
-                                @if($sales_type === 'offline')
-                                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.15) !important;">
-                                        <span class="text-light small text-uppercase font-weight-bold">
-                                            <i class="fas fa-credit-card mr-1 text-warning"></i> Metode Pembayaran:
-                                        </span>
-                                        <div class="btn-group btn-group-sm">
-                                            <button type="button" 
-                                                    wire:click="setPaymentMethod('cash')" 
-                                                    class="btn {{ $payment_method === 'cash' ? 'btn-success font-weight-bold active' : 'btn-outline-light text-white' }}">
-                                                <i class="fas fa-money-bill-wave mr-1"></i> CASH
-                                            </button>
-                                            <button type="button" 
-                                                    wire:click="setPaymentMethod('qris')" 
-                                                    class="btn {{ $payment_method === 'qris' ? 'btn-info font-weight-bold active' : 'btn-outline-light text-white' }}">
-                                                <i class="fas fa-qrcode mr-1"></i> QRIS
-                                            </button>
-                                        </div>
+                                {{-- Pilihan Metode Pembayaran (Offline & Online) --}}
+                                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.15) !important;">
+                                    <span class="text-light small text-uppercase font-weight-bold">
+                                        <i class="fas fa-credit-card mr-1 text-warning"></i> Metode Pembayaran:
+                                    </span>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" 
+                                                wire:click="setPaymentMethod('cash')" 
+                                                class="btn {{ $payment_method === 'cash' ? 'btn-success font-weight-bold active' : 'btn-outline-light text-white' }}">
+                                            <i class="fas fa-money-bill-wave mr-1"></i> CASH
+                                        </button>
+                                        <button type="button" 
+                                                wire:click="setPaymentMethod('qris')" 
+                                                class="btn {{ $payment_method === 'qris' ? 'btn-info font-weight-bold active' : 'btn-outline-light text-white' }}">
+                                            <i class="fas fa-qrcode mr-1"></i> QRIS
+                                        </button>
                                     </div>
-                                @endif
+                                </div>
 
                                 <div class="row align-items-center">
                                     <div class="col-md-5">
@@ -296,14 +300,14 @@
                                         <h1 class="mb-0" style="font-size: 2.5rem; color: #fab1a0;">
                                             <small style="font-size: 1rem;">Rp</small>{{ number_format($total_price, 0, ',', '.') }}
                                         </h1>
-                                        @if($sales_type === 'offline' && $payment_method === 'qris')
+                                        @if($payment_method === 'qris')
                                             <div class="mt-1">
                                                 <span class="badge badge-info"><i class="fas fa-qrcode mr-1"></i> METODE: QRIS</span>
                                             </div>
                                         @endif
                                     </div>
                                     <div class="col-md-7 border-left" style="border-color: rgba(255,255,255,0.1) !important;">
-                                        @if($sales_type === 'offline' && $payment_method === 'qris')
+                                        @if($payment_method === 'qris')
                                             {{-- AREA INFORMASI & PLACEHOLDER QRIS --}}
                                             <div class="p-2 rounded text-center" style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.25);">
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
@@ -354,9 +358,8 @@
                     <button type="button" class="btn btn-danger shadow-sm" data-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-primary shadow-sm" 
                             wire:click="store" 
-                            {{ empty($cart) || ($sales_type === 'offline' && $payment_method === 'cash' && $change < 0) || ($sales_type === 'online' && $change < 0) ? 'disabled' : '' }}>
-                        <i class="fas fa-save mr-2"></i> Simpan Transaksi ({{ strtoupper($sales_type) }})
-                    </button>
+                            {{ empty($cart) || ($payment_method === 'cash' && $change < 0) ? 'disabled' : '' }}>
+                        <i class="fas fa-save mr-2"></i> Simpan Transaksi {{ ucfirst($sales_type) }}                     </button>
                 </div>
             </div>
         </div>
