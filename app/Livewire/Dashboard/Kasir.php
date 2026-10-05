@@ -55,6 +55,12 @@ class Kasir extends Component
         $availableYears = array_unique(array_merge($existingYears, $baseYears));
         sort($availableYears);
 
+        // Recent transactions for overview
+        $recentTransactions = Shopping::with(['user', 'details'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('livewire.dashboard.kasir', [
             'countCategory' => Category::count(),
             'countProductReady' => Product::count(),
@@ -73,6 +79,7 @@ class Kasir extends Component
             'selectedYear' => $year,
             'annualBreakdown' => $breakdown,
             'availableYears' => $availableYears,
+            'recentTransactions' => $recentTransactions,
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,    
             'content' => $this->content, 
