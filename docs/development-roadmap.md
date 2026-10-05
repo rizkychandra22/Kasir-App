@@ -38,6 +38,15 @@ Dokumen ini memuat peta jalan (*roadmap*) pengembangan aplikasi KasirApp, mencak
 - [x] Pembatasan menu Kasir hanya 4 menu utama operasional.
 - [x] Pemberian hak akses penuh ke seluruh fitur untuk Role Admin (termasuk *Biaya & Target HPP*).
 
+### Sprint 2.5: Redesain Dashboard & Metrik Target Penjualan ✅
+- [x] Penyelarasan breadcrumb menu operasional & finansial.
+- [x] 4 Card Metrik Utama diperbesar 2x lipat (2.5rem) dengan border-top tematik 5px.
+- [x] Layout horizontal badge pendapatan Offline & Online (sebaris, rapi tanpa icon).
+- [x] Pemindahan filter tahun reaktif langsung ke judul overview dashboard.
+- [x] 6 Card Target Penjualan Tahunan (Target, Aktual, Pencapaian %, Target Cup, Realisasi Cup, Sisa Target).
+- [x] Perbaikan kompatibilitas icon FontAwesome (`fa-money-bill-wave`, `fa-coffee`).
+- [x] Refactoring Blade menggunakan direktif resmi `@style` untuk menghilangkan garis merah (*zero linting errors*).
+
 ---
 
 ## 3. Standar Arsitektur Struktur Folder (Feature / Module-Based)
