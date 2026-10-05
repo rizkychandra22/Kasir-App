@@ -24,17 +24,18 @@ class DataShopping extends Component
     public $selectedShopping = null;
 
     public $title = 'Dashboard';
-    public $subpage = 'Overview Kasir';
+    public $subpage = 'Data Penjualan';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Data Penjualan';
+    public $content = 'Index Data';
 
     public function mount()
     {
         $isAdmin = Auth::user()->role == 'Admin';
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
-        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
+        $this->subpage = 'Data Penjualan';
         $this->linkSubpage = route('kasir.shopping');
+        $this->content = 'Index Data';
     }
 
     public function resetInput()

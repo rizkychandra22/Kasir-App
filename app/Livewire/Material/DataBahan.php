@@ -20,17 +20,18 @@ class DataBahan extends Component
     public $selectedBahanForHistory, $selectedBahanForDetail;
 
     public $title = 'Dashboard';
-    public $subpage = 'Overview Kasir';
+    public $subpage = 'Data Master Bahan';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Master Data Bahan';
+    public $content = 'Index Data';
 
     public function mount()
     {
         $isAdmin = Auth::user()->role == 'Admin';
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
-        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
+        $this->subpage = 'Data Master Bahan';
         $this->linkSubpage = route('kasir.bahan');
+        $this->content = 'Index Data';
         $this->calculateStockFromPurchase();
     }
 

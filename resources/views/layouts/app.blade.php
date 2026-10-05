@@ -81,12 +81,12 @@
                                 <i class="fas fa-seedling"></i> <span>Data Master Bahan</span>
                             </a>
                         </li>
-                        <li class="{{ Route::is(['kasir.product', 'kasir.category']) ? 'active' : '' }}">
+                        <li class="{{ Route::is(['kasir.product', 'kasir.product.export', 'kasir.category']) ? 'active' : '' }}">
                             <a href="{{ route('kasir.product') }}" class="nav-link">
                                 <i class="fas fa-cubes"></i> <span>Data Produk</span>
                             </a>
                         </li>
-                        <li class="{{ Route::is('kasir.shopping') ? 'active' : '' }}">
+                        <li class="{{ Route::is(['kasir.shopping', 'kasir.shopping.export']) ? 'active' : '' }}">
                             <a href="{{ route('kasir.shopping') }}" class="nav-link">
                                 <i class="fas fa-money-bill-wave"></i> <span>Data Penjualan</span>
                             </a>
