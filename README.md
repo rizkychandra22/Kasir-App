@@ -3,7 +3,7 @@
     <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="220" alt="Laravel Logo" style="vertical-align: middle;">
   </a>
   <a href="https://getstisla.com" target="_blank">
-    <img src="public/!template-stisla/dist/assets/img/stisla-fill.svg" width="65" alt="Stisla Logo" style="vertical-align: middle; mb-2">
+    <img src="public/!template-stisla/dist/assets/img/stisla-fill.svg" width="65" alt="Stisla Logo" style="vertical-align: middle; margin-bottom: 4px;">
   </a>
 </p>
 
