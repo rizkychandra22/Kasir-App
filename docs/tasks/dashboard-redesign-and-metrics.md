@@ -134,3 +134,17 @@
   - [x] Admin memiliki akses lengkap ke semua tombol modul.
 - [x] **Kualitas Kode**:
   - [x] Tidak ada syntax error atau red lines pada file `admin.blade.php` dan `kasir.blade.php`.
+
+---
+
+## 5. Tindak Lanjut PR Review (Codex Feedback)
+
+- **Masukan Reviewer**:
+  > *Exclude voided sales from the new dashboard metrics*: Transaksi berstatus `canceled`, `cancelled`, `batal`, atau `void` terhitung ke dalam agregat `countProductSold`, `countRevenue`, `revenueOffline`, `revenueOnline`, serta daftar `recentTransactions`. Hal ini tidak konsisten dengan `Shopping::validSales()` dan kalkulasi target/ekspor.
+- **Tindakan Perbaikan**:
+  1. Pada `app/Livewire/Dashboard/Admin.php` dan `app/Livewire/Dashboard/Kasir.php`:
+     - Query `countRevenue`, `revenueOffline`, dan `revenueOnline` kini diawali dengan scope `Shopping::validSales()`.
+     - Query `countProductSold` kini difilter melalui relasi transaksi yang valid: `ShoppingDetail::whereHas('shopping', fn($q) => $q->validSales()->whereBetween('created_at', [$startOfPeriod, $endOfPeriod]))->sum('qty')`.
+     - Query `recentTransactions` kini menggunakan `Shopping::validSales()` sehingga transaksi yang dibatalkan tidak muncul di daftar ringkasan dashboard.
+  2. Hasil: Agregat metrik dashboard 100% konsisten dengan laporan Target Penjualan dan Laba/Rugi.
+
