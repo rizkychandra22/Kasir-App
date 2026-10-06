@@ -1,8 +1,248 @@
 /**
- *
- * You can write your CSS code here, DO NOT touch the default JavaScript file
- * because it will make it harder for you to update.
- * 
+ * Global Custom Theme - Dominan Primary #13295C
+ * Brand: Brew Island Coffee
  */
 
-/*# sourceMappingURL=custom.css.map */
+:root {
+    --brand-primary: #13295C;
+    --brand-primary-hover: #0d1d42;
+    --brand-primary-light: #1e3a78;
+    --brand-primary-soft: #f0f4fa;
+    --brand-primary-focus: rgba(19, 41, 92, 0.25);
+    --brand-primary-shadow: rgba(19, 41, 92, 0.35);
+}
+
+/* ========================================================
+   1. NAVBAR & HEADER
+   ======================================================== */
+.navbar-bg {
+    background-color: var(--brand-primary) !important;
+}
+
+.navbar.active {
+    background-color: var(--brand-primary) !important;
+}
+
+.main-navbar .nav-link:hover {
+    color: #f0f4fa !important;
+}
+
+/* ========================================================
+   2. SIDEBAR
+   ======================================================== */
+.main-sidebar .sidebar-brand a {
+    color: var(--brand-primary) !important;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.main-sidebar .sidebar-menu li.menu-header {
+    color: #7b8a9e !important;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+.main-sidebar .sidebar-menu li a:hover {
+    color: var(--brand-primary) !important;
+}
+
+.main-sidebar .sidebar-menu li.active a {
+    color: var(--brand-primary) !important;
+    font-weight: 700;
+    background-color: var(--brand-primary-soft) !important;
+}
+
+.main-sidebar .sidebar-menu li.active > a:before {
+    background-color: var(--brand-primary) !important;
+}
+
+/* ========================================================
+   3. BUTTONS (PRIMARY & OUTLINE)
+   ======================================================== */
+.btn-primary, 
+.btn-primary.disabled, 
+.btn-primary:disabled {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px var(--brand-primary-shadow) !important;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active,
+.btn-primary:not(:disabled):not(.disabled):active {
+    background-color: var(--brand-primary-hover) !important;
+    border-color: var(--brand-primary-hover) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(13, 29, 66, 0.45) !important;
+}
+
+.btn-outline-primary {
+    color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover, 
+.btn-outline-primary:focus, 
+.btn-outline-primary:active,
+.btn-outline-primary:not(:disabled):not(.disabled):active {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px var(--brand-primary-shadow) !important;
+}
+
+/* Button groups active states */
+.btn-group .btn.btn-primary,
+.btn-group .btn.active {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+}
+
+/* ========================================================
+   4. CARDS & BADGES
+   ======================================================== */
+.card.card-primary {
+    border-top: 2px solid var(--brand-primary) !important;
+}
+
+.card-header h4 {
+    color: #212529;
+}
+
+.card-header h4 i.text-primary,
+.card-header i.text-primary {
+    color: var(--brand-primary) !important;
+}
+
+.card .card-header h4 + .card-header-action .btn.active, 
+.card .card-header h4 + .card-header-form .btn.active {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px var(--brand-primary-shadow) !important;
+}
+
+.card-icon.bg-primary,
+.bg-primary {
+    background-color: var(--brand-primary) !important;
+}
+
+.text-primary {
+    color: var(--brand-primary) !important;
+}
+
+.badge.badge-primary {
+    background-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+}
+
+/* ========================================================
+   5. FORMS & INPUT FOCUS
+   ======================================================== */
+.form-control:focus, 
+.input-group-text:focus, 
+.custom-select:focus, 
+.custom-file-label:focus {
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 0 0 0.2rem var(--brand-primary-focus) !important;
+    background-color: #ffffff !important;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+}
+
+.custom-switch-input:checked ~ .custom-switch-indicator {
+    background-color: var(--brand-primary) !important;
+}
+
+.selectgroup-input:focus + .selectgroup-button, 
+.selectgroup-input:checked + .selectgroup-button {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+}
+
+/* ========================================================
+   6. PAGINATION & LINKS
+   ======================================================== */
+a {
+    color: var(--brand-primary);
+}
+
+a:hover {
+    color: var(--brand-primary-hover);
+}
+
+.page-item.active .page-link {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+}
+
+.page-link {
+    color: var(--brand-primary);
+}
+
+.page-link:hover {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+/* ========================================================
+   7. NAVIGATION TABS & PILLS & DROPDOWNS
+   ======================================================== */
+.nav-pills .nav-link.active, 
+.nav-pills .show > .nav-link {
+    background-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px var(--brand-primary-shadow);
+}
+
+.nav-tabs .nav-item .nav-link.active {
+    color: var(--brand-primary) !important;
+    border-bottom: 2px solid var(--brand-primary) !important;
+}
+
+.dropdown-item.active, 
+.dropdown-item:active {
+    background-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--brand-primary-soft);
+}
+
+/* ========================================================
+   8. ALERTS
+   ======================================================== */
+.alert.alert-primary {
+    background-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+}
+
+/* ========================================================
+   9. SECTION & HEADINGS
+   ======================================================== */
+.section-header h1 {
+    color: var(--brand-primary);
+    font-weight: 700;
+}
+
+.section-title {
+    color: var(--brand-primary);
+    font-weight: 700;
+}
+
+/* Accordion header active */
+.accordion .accordion-header[aria-expanded="true"] {
+    background-color: var(--brand-primary) !important;
+    box-shadow: 0 2px 6px var(--brand-primary-shadow) !important;
+    color: #ffffff !important;
+}

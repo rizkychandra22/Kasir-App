@@ -34,15 +34,19 @@
             <div class="d-block">
                 <label for="password" class="control-label">Password</label>
             </div>
-            <div class="input-group">
-                <input type="password" 
+            <div class="input-group" x-data="{ showPassword: false }">
+                <input :type="showPassword ? 'text' : 'password'"
+                    type="password" 
                     class="form-control @error('password') is-invalid @enderror" 
                     id="password" 
                     wire:model="password" 
                     placeholder="Masukkan Password">
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                        <i class="fas fa-eye" id="eyeIcon"></i>
+                    <button type="button" class="btn btn-outline-secondary" id="togglePassword"
+                        @click="showPassword = !showPassword"
+                        onclick="toggleLoginPassword(this)"
+                        title="Lihat / Sembunyikan Password">
+                        <i class="fas fa-eye" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'" id="eyeIcon"></i>
                     </button>
                 </div>
             </div>
@@ -65,20 +69,29 @@
     {{-- Script khusus untuk interaksi Form --}}
     @push('scripts')
         <script>
-            function initLoginScripts() {
-                const togglePassword = document.getElementById('togglePassword');
+            function toggleLoginPassword(buttonEl) {
+                // If Alpine is handling this component, let Alpine manage it
+                if (window.Alpine && buttonEl && buttonEl._x_dataStack) {
+                    return;
+                }
                 const passwordField = document.getElementById('password');
                 const eyeIcon = document.getElementById('eyeIcon');
-
-                if (togglePassword && passwordField) {
-                    togglePassword.addEventListener('click', function() {
-                        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                        passwordField.setAttribute('type', type);
-                        eyeIcon.classList.toggle('fa-eye');
-                        eyeIcon.classList.toggle('fa-eye-slash');
-                    });
+                if (passwordField) {
+                    const isPassword = passwordField.type === 'password';
+                    passwordField.type = isPassword ? 'text' : 'password';
+                    if (eyeIcon) {
+                        if (isPassword) {
+                            eyeIcon.classList.remove('fa-eye');
+                            eyeIcon.classList.add('fa-eye-slash');
+                        } else {
+                            eyeIcon.classList.remove('fa-eye-slash');
+                            eyeIcon.classList.add('fa-eye');
+                        }
+                    }
                 }
+            }
 
+            function initLoginAlerts() {
                 setTimeout(() => {
                     document.querySelectorAll('.alert-auto-hide').forEach(el => {
                         el.style.transition = 'opacity 0.5s ease';
@@ -88,8 +101,8 @@
                 }, 3000);
             }
 
-            document.addEventListener('DOMContentLoaded', initLoginScripts);
-            document.addEventListener('livewire:navigated', initLoginScripts);
+            document.addEventListener('DOMContentLoaded', initLoginAlerts);
+            document.addEventListener('livewire:navigated', initLoginAlerts);
         </script>
     @endpush
 </div>

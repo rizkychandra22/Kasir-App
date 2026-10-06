@@ -136,6 +136,7 @@ class OfflinePaymentMethodTest extends TestCase
             ->assertSet('payment_method', 'qris')
             ->assertSet('pay', 20000)
             ->assertSet('change', 0)
+            ->set('qris_confirmed', true)
             ->call('store')
             ->assertHasNoErrors();
 
@@ -564,6 +565,7 @@ class OfflinePaymentMethodTest extends TestCase
             ->call('addToCart', $this->product->id)
             ->set('sales_type', 'offline')
             ->call('setPaymentMethod', 'qris')
+            ->set('qris_confirmed', true)
             ->call('store')
             ->assertHasNoErrors();
 
