@@ -18,6 +18,7 @@ use App\Livewire\Operational\TargetPenjualan;
 use App\Livewire\Operational\DataLabor;
 use App\Livewire\Operational\DataOverhead;
 use App\Livewire\Operational\HppProduct;
+use App\Livewire\User\Profile as UserProfile;
 
 // Import Class Global
 use Illuminate\Support\Facades\Auth;
@@ -68,6 +69,7 @@ Route::middleware(['RoleUser:Admin,Kasir'])->prefix('dashboard')->group(function
     Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
     Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
     Route::get('/kasir/shopping/export', PreviewPrintShopping::class)->name('kasir.shopping.export');
+    Route::get('/profile', UserProfile::class)->name('user.profile');
 });
 
 // Route Download PDF & Excel

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <title>{{ $subpage ?? 'Dashboard' }} &mdash; {{ $content ?? 'Sistem Kasir' }}</title>
-    <link rel="icon" href="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//97/MTA-50267148/no-brand_papan-tanda-kasir-cashier-logo-sign_full01.jpg">
+    <link rel="icon" href="{{ asset('logoBrewIsland.png') }}">
 
     <link rel="stylesheet" href="{{ asset('!template-stisla/dist/assets/modules/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('!template-stisla/dist/assets/modules/fontawesome/css/all.min.css') }}">
@@ -15,6 +15,21 @@
 
     <link rel="stylesheet" href="{{ asset('!template-stisla/dist/assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('!template-stisla/dist/assets/css/components.css') }}">
+    <link rel="stylesheet" href="{{ asset('!template-stisla/dist/assets/css/custom.css') }}">
+
+    {{-- Deklarasi Font Hinnual --}}
+    <style>
+        @font-face {
+            font-family: 'Hinnual';
+            src: url("{{ asset('fonts/Hinnual.ttf') }}") format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .font-hinnual {
+            font-family: 'Hinnual', sans-serif;
+        }
+    </style>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -31,9 +46,6 @@
                     </ul>
                 </div>
 
-                {{-- @include('partials.notifications')
-                    @include('partials.messages') --}}
-
                 <ul class="navbar-nav navbar-right">
                     <li class="dropdown">
                         <a href="" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
@@ -41,7 +53,7 @@
                             <div class="d-sm-none d-lg-inline-block">Hi, {{ Auth::user()->name }}</div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a href="" class="dropdown-item has-icon">
+                            <a href="{{ route('user.profile') }}" class="dropdown-item has-icon">
                                 <i class="far fa-user"></i> Profil
                             </a>
                             <div class="dropdown-divider"></div>
@@ -55,10 +67,16 @@
             <div class="main-sidebar sidebar-style-2">
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
-                        <a href="">Sistem Kasir</a>
+                        <a href="{{ Auth::user()->isAdmin() ? route('admin.dashboard') : route('kasir.dashboard') }}" class="d-flex align-items-center justify-content-center">
+                            <img src="{{ asset('logoBrewIsland.png') }}" alt="Brew Island Logo" style="max-height: 38px; width: auto;" class="mr-2">
+                            {{-- Penerapan Font --}}
+                            <span class="font-hinnual">Brew Island</span>
+                        </a>
                     </div>
                     <div class="sidebar-brand sidebar-brand-sm">
-                        <a href="">SK</a>
+                        <a href="{{ Auth::user()->isAdmin() ? route('admin.dashboard') : route('kasir.dashboard') }}">
+                            <img src="{{ asset('logoBrewIsland.png') }}" alt="BI" style="max-height: 28px; width: auto;">
+                        </a>
                     </div>
                     <ul class="sidebar-menu">
                         <li class="menu-header">Dashboard {{ Auth::user()->role }}</li>

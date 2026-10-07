@@ -40,7 +40,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-sm-6 col-xl-3 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 5px solid #ffa426 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #ffa426 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-uppercase font-weight-bold text-muted small" style="letter-spacing: 0.5px;">Total Kategori</span>
@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6 col-xl-3 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 5px solid #3abaf4 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #3abaf4 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-uppercase font-weight-bold text-muted small" style="letter-spacing: 0.5px;">Produk Tersedia</span>
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6 col-xl-3 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 5px solid #47c363 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #47c363 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-uppercase font-weight-bold text-muted small" style="letter-spacing: 0.5px;">Produk Terjual</span>
@@ -103,7 +103,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6 col-xl-3 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 5px solid #fc544b !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #fc544b !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-uppercase font-weight-bold text-muted small" style="letter-spacing: 0.5px;">Total Pendapatan</span>
@@ -151,7 +151,7 @@
 
                             <!-- Target Penjualan -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #6777ef !important; border-radius: 10px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #6777ef !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="letter-spacing: 0.5px;">Target Penjualan</span>
@@ -173,7 +173,7 @@
 
                             <!-- Aktual Penjualan -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #34395e !important; border-radius: 10px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #34395e !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="letter-spacing: 0.5px;">Aktual Penjualan</span>
@@ -199,7 +199,8 @@
                                     'border: 1px solid #e9ecef',
                                     'border-top: 4px solid #47c363 !important' => $annualBreakdown['annual_sales_percent'] >= 100,
                                     'border-top: 4px solid #3abaf4 !important' => $annualBreakdown['annual_sales_percent'] < 100,
-                                    'border-radius: 10px',
+                                    'border-radius: 12px',
+                                    'transition: transform 0.2s, box-shadow 0.2s',
                                 ])>
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -222,7 +223,7 @@
 
                             <!-- Target Cup -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #6c757d !important; border-radius: 10px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #6c757d !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="letter-spacing: 0.5px;">Target Cup</span>
@@ -244,7 +245,7 @@
 
                             <!-- Cup Terjual -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #47c363 !important; border-radius: 10px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #47c363 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="letter-spacing: 0.5px;">Cup Terjual</span>
@@ -270,7 +271,7 @@
 
                             <!-- Sisa Target -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-4">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #fc544b !important; border-radius: 10px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #fc544b !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="letter-spacing: 0.5px;">Sisa Target</span>
@@ -352,7 +353,7 @@
                                 <div class="section-title mt-0 font-weight-bold">Ringkasan Biaya Non-Bahan (Labor & Overhead)</div>
                             </div>
                             <div class="col-12 col-md-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #6777ef !important; border-radius: 10px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #6777ef !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small">Tenaga Kerja (Active)</span>
@@ -373,7 +374,7 @@
                             </div>
 
                             <div class="col-12 col-md-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #ffa426 !important; border-radius: 10px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #ffa426 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small">Biaya Operasional (Active)</span>
@@ -394,7 +395,7 @@
                             </div>
 
                             <div class="col-12 col-md-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #3abaf4 !important; border-radius: 10px; background-color: #f8fafc;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #3abaf4 !important; border-radius: 12px; background-color: #f8fafc; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-4 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="text-muted font-weight-bold text-uppercase small">Non-Bahan / Cup</span>

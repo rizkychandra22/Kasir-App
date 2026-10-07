@@ -17,6 +17,7 @@ class DataShopping extends Component
     public $search_prd;
     public $sales_type = 'offline'; // 'offline' or 'online'
     public $payment_method = 'cash'; // 'cash' or 'qris'
+    public $qris_confirmed = false; // manual verification confirmation for offline QRIS
     public $pay = 0;
     public $total_price = 0;
     public $change = 0;
@@ -42,16 +43,23 @@ class DataShopping extends Component
         $this->cart = [];
         $this->search_prd = '';
         $this->payment_method = 'cash';
+        $this->qris_confirmed = false;
         $this->pay = 0;
         $this->total_price = 0;
         $this->change = 0;
         $this->resetValidation();
     }
 
+    public function confirmQris()
+    {
+        $this->qris_confirmed = true;
+    }
+
     public function setPaymentMethod($method)
     {
         if (!in_array($method, ['cash', 'qris'])) return;
         $this->payment_method = $method;
+        $this->qris_confirmed = false;
 
         if ($method === 'qris') {
             $this->pay = (int)$this->total_price;
@@ -76,6 +84,7 @@ class DataShopping extends Component
             $this->payment_method = 'cash';
         }
 
+        $this->qris_confirmed = false;
         $this->sales_type = $type;
 
         foreach ($this->cart as $productId => $item) {
@@ -168,7 +177,17 @@ class DataShopping extends Component
             'payment_method' => 'required|in:cash,qris',
         ];
 
-        $this->validate($rules);
+        $messages = [];
+
+        if ($this->sales_type === 'offline') {
+            $rules['payment_method'] = 'required|in:cash,qris';
+            if ($this->payment_method === 'qris') {
+                $rules['qris_confirmed'] = 'accepted';
+                $messages['qris_confirmed.accepted'] = 'Pastikan pembayaran QRIS sudah diterima sebelum menyelesaikan transaksi.';
+            }
+        }
+
+        $this->validate($rules, $messages);
 
         // 1. VALIDASI STOK BAHAN TERLEBIH DAHULU BEFORE TRANSACTION
         $requiredMaterials = []; // bahan_id => required_qty_in_base_unit

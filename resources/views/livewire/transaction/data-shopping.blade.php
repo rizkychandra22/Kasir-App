@@ -307,25 +307,54 @@
                                         @endif
                                     </div>
                                     <div class="col-md-7 border-left" style="border-color: rgba(255,255,255,0.1) !important;">
-                                        @if($payment_method === 'qris')
-                                            {{-- AREA INFORMASI & PLACEHOLDER QRIS --}}
-                                            <div class="p-2 rounded text-center" style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.25);">
-                                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                                    <span class="text-light small text-uppercase font-weight-bold">PEMBAYARAN QRIS</span>
-                                                    <span class="badge badge-info font-weight-bold">QRIS</span>
+                                        @if($sales_type === 'offline' && $payment_method === 'qris')
+                                            {{-- AREA INFORMASI & KONFIRMASI QRIS MANUAL --}}
+                                            <div class="p-3 rounded text-left" style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(23, 162, 184, 0.5);">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span class="text-light small text-uppercase font-weight-bold">
+                                                        <i class="fas fa-qrcode mr-1 text-info"></i> Pembayaran QRIS Manual
+                                                    </span>
+                                                    <span class="badge badge-info font-weight-bold">QRIS MANUAL</span>
                                                 </div>
                                                 
-                                                <div class="my-2 p-2 bg-light text-dark rounded border d-flex flex-column align-items-center justify-content-center">
-                                                    <i class="fas fa-qrcode fa-2x text-secondary mb-1"></i>
-                                                    <span class="badge badge-warning text-dark font-weight-bold">[ QRIS BELUM AKTIF ]</span>
-                                                    <small class="text-muted mt-1" style="font-size: 11px;">QRIS belum dikonfigurasi & gateway belum aktif</small>
+                                                <div class="p-2 mb-2 rounded bg-light text-dark border">
+                                                    <div class="d-flex align-items-start mb-2">
+                                                        <i class="fas fa-info-circle text-info mr-2 mt-1" style="font-size: 1.1rem;"></i>
+                                                        <div>
+                                                            <strong class="d-block text-dark font-weight-bold" style="font-size: 12.5px;">QRIS Manual — pembayaran dilakukan di luar aplikasi.</strong>
+                                                            <span class="text-muted" style="font-size: 11.5px;">Pembayaran dilakukan melalui QRIS di luar aplikasi.</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="alert alert-warning py-1 px-2 my-2 text-dark font-weight-bold" style="font-size: 11.5px;">
+                                                        <i class="fas fa-exclamation-triangle mr-1 text-warning"></i>
+                                                        Pastikan pembayaran QRIS sudah diterima sebelum menyelesaikan transaksi.
+                                                    </div>
+
+                                                    <div class="custom-control custom-checkbox mt-2 pt-2 border-top">
+                                                        <input type="checkbox" class="custom-control-input" id="checkQrisConfirm" wire:model.live="qris_confirmed">
+                                                        <label class="custom-control-label font-weight-bold text-dark" for="checkQrisConfirm" style="font-size: 12px; cursor: pointer;">
+                                                            Saya sudah memastikan pembayaran QRIS diterima
+                                                        </label>
+                                                    </div>
+                                                    @error('qris_confirmed')
+                                                        <div class="text-danger small font-weight-bold mt-1">
+                                                            <i class="fas fa-times-circle mr-1"></i> {{ $message }}
+                                                        </div>
+                                                    @enderror
                                                 </div>
 
-                                                <div class="d-flex justify-content-between align-items-center pt-1 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
-                                                    <span class="text-light small text-uppercase">TOTAL YANG HARUS DIBAYAR:</span>
-                                                    <h4 class="mb-0 text-warning font-weight-bold">
+                                                <div class="d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                                                    <span class="text-light small text-uppercase">Nominal Pembayaran:</span>
+                                                    <h5 class="mb-0 text-warning font-weight-bold">
                                                         Rp {{ number_format($total_price, 0, ',', '.') }}
-                                                    </h4>
+                                                    </h5>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center pt-1">
+                                                    <span class="text-light small text-uppercase">Kembalian:</span>
+                                                    <h5 class="mb-0 text-success font-weight-bold">
+                                                        Rp 0
+                                                    </h5>
                                                 </div>
                                             </div>
                                         @else
@@ -358,8 +387,9 @@
                     <button type="button" class="btn btn-danger shadow-sm" data-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-primary shadow-sm" 
                             wire:click="store" 
-                            {{ empty($cart) || ($payment_method === 'cash' && $change < 0) ? 'disabled' : '' }}>
-                        <i class="fas fa-save mr-2"></i> Simpan Transaksi {{ ucfirst($sales_type) }}                     </button>
+                            {{ empty($cart) || ($sales_type === 'offline' && $payment_method === 'cash' && $change < 0) || ($sales_type === 'online' && $change < 0) || ($sales_type === 'offline' && $payment_method === 'qris' && !$qris_confirmed) ? 'disabled' : '' }}>
+                        <i class="fas fa-save mr-2"></i> Simpan Transaksi ({{ strtoupper($sales_type) }})
+                    </button>
                 </div>
             </div>
         </div>
