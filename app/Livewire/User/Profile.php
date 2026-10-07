@@ -14,9 +14,9 @@ class Profile extends Component
     // Editable profile fields
     public $name;
     public $email;
+    public $username;
 
     // Read-only account info
-    public $username;
     public $code;
     public $role;
 
@@ -44,17 +44,22 @@ class Profile extends Component
         $this->validate([
             'name' => 'required|string|min:2|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $userId,
+            'username' => 'required|string|min:2|max:255|unique:users,username,' . $userId,
         ], [
             'name.required' => 'Nama pengguna harus diisi.',
             'name.min' => 'Nama pengguna minimal 2 karakter.',
             'email.required' => 'Email harus diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email ini sudah digunakan oleh akun lain.',
+            'username.required' => 'Username harus diisi.',
+            'username.min' => 'Username minimal 5 karakter.',
+            'username.unique' => 'Username ini sudah digunakan oleh akun lain.',
         ]);
 
         $user = Auth::user();
         $user->name = $this->name;
         $user->email = $this->email;
+        $user->username = $this->username;
         $user->save();
 
         session()->flash('profile_success', 'Data profil Anda berhasil diperbarui.');

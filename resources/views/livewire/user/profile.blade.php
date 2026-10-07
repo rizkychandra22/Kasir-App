@@ -17,7 +17,7 @@
             <div class="row mt-sm-4">
                 {{-- Kolom Kiri: Informasi Akun & Avatar --}}
                 <div class="col-12 col-md-12 col-lg-5 mb-4">
-                    <div class="card profile-widget shadow-sm">
+                    <div class="card profile-widget shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid var(--brand-primary, #13295C) !important; border-radius: 12px;">
                         <div class="profile-widget-header text-center pt-4">
                             <div class="d-inline-flex justify-content-center align-items-center rounded-circle bg-light border shadow-sm" style="width: 100px; height: 100px;">
                                 <i class="fas fa-user fa-3x text-primary"></i>
@@ -58,7 +58,7 @@
                 {{-- Kolom Kanan: Form Edit Profil & Ganti Password --}}
                 <div class="col-12 col-md-12 col-lg-7">
                     {{-- Form 1: Ubah Data Profil --}}
-                    <div class="card shadow-sm mb-4">
+                    <div class="card shadow-sm mb-4" style="border: 1px solid #e9ecef; border-top: 4px solid var(--brand-primary, #13295C) !important; border-radius: 12px;">
                         <div class="card-header">
                             <h4 class="text-dark"><i class="fas fa-user-edit mr-2 text-primary"></i>Edit Data Profil</h4>
                         </div>
@@ -91,11 +91,14 @@
 
                                 <div class="row">
                                     <div class="col-md-6 form-group">
-                                        <label class="text-muted small">Username (Read-Only)</label>
-                                        <input type="text" class="form-control bg-light" value="{{ $username }}" readonly disabled>
+                                        <label for="username" class="font-weight-bold">Username <span class="text-danger">*</span></label>
+                                        <input type="text" id="username" wire:model="username" class="form-control @error('username') is-invalid @enderror" placeholder="Username">
+                                        @error('username')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="text-muted small">Role (Read-Only)</label>
+                                        <label class="font-weight-bold">Role <span class="text-muted">(Read-Only)</span></label>
                                         <input type="text" class="form-control bg-light" value="{{ $role }}" readonly disabled>
                                     </div>
                                 </div>
@@ -115,7 +118,7 @@
                     </div>
 
                     {{-- Form 2: Ganti Password --}}
-                    <div class="card shadow-sm mb-4">
+                    <div class="card shadow-sm mb-4" style="border: 1px solid #e9ecef; border-top: 4px solid #ffa426 !important; border-radius: 12px;">
                         <div class="card-header">
                             <h4 class="text-dark"><i class="fas fa-key mr-2 text-warning"></i>Ganti Kata Sandi</h4>
                         </div>

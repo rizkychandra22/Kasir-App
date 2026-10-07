@@ -30,23 +30,19 @@
                         </span>
                         <div class="btn-group btn-group-sm mr-3 my-1" role="group" aria-label="Filter Periode">
                             <button type="button" wire:click="setPeriod('today')" 
-                                    class="btn font-weight-bold {{ $selectedPeriod === 'today' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                    style="{{ $selectedPeriod === 'today' ? 'background-color: #13295C; border-color: #13295C;' : 'color: #13295C; border-color: #13295C;' }}">
+                                    class="btn font-weight-bold {{ $selectedPeriod === 'today' ? 'btn-primary' : 'btn-outline-primary' }}">
                                 Hari Ini
                             </button>
                             <button type="button" wire:click="setPeriod('week')" 
-                                    class="btn font-weight-bold {{ $selectedPeriod === 'week' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                    style="{{ $selectedPeriod === 'week' ? 'background-color: #13295C; border-color: #13295C;' : 'color: #13295C; border-color: #13295C;' }}">
+                                    class="btn font-weight-bold {{ $selectedPeriod === 'week' ? 'btn-primary' : 'btn-outline-primary' }}">
                                 Minggu Ini
                             </button>
                             <button type="button" wire:click="setPeriod('month')" 
-                                    class="btn font-weight-bold {{ $selectedPeriod === 'month' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                    style="{{ $selectedPeriod === 'month' ? 'background-color: #13295C; border-color: #13295C;' : 'color: #13295C; border-color: #13295C;' }}">
+                                    class="btn font-weight-bold {{ $selectedPeriod === 'month' ? 'btn-primary' : 'btn-outline-primary' }}">
                                 Bulan Ini
                             </button>
                             <button type="button" wire:click="setPeriod('year')" 
-                                    class="btn font-weight-bold {{ $selectedPeriod === 'year' ? 'btn-primary' : 'btn-outline-primary' }}"
-                                    style="{{ $selectedPeriod === 'year' ? 'background-color: #13295C; border-color: #13295C;' : 'color: #13295C; border-color: #13295C;' }}">
+                                    class="btn font-weight-bold {{ $selectedPeriod === 'year' ? 'btn-primary' : 'btn-outline-primary' }}">
                                 Tahun Ini
                             </button>
                         </div>
@@ -392,11 +388,10 @@
                         </div>
                     </div>
                     <div class="card-body pt-3 pb-3">
-                        {{-- 6 Metric Cards --}}
                         <div class="row">
                             <!-- Target Penjualan -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 3px solid #13295C !important; border-radius: 8px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #13295C !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-3 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="font-size: 11px;">Target Penjualan</span>
@@ -414,7 +409,7 @@
 
                             <!-- Aktual Penjualan -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 3px solid #34395e !important; border-radius: 8px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #34395e !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-3 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="font-size: 11px;">Aktual Penjualan</span>
@@ -432,19 +427,25 @@
 
                             <!-- Pencapaian Omset -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 3px solid {{ $annualBreakdown['annual_sales_percent'] >= 100 ? '#28a745' : '#17a2b8' }} !important; border-radius: 8px;">
+                                <div class="card h-100 mb-0 shadow-sm" @style([
+                                    'border: 1px solid #e9ecef',
+                                    'border-top: 4px solid #28a745 !important' => $annualBreakdown['annual_sales_percent'] >= 100,
+                                    'border-top: 4px solid #17a2b8 !important' => $annualBreakdown['annual_sales_percent'] < 100,
+                                    'border-radius: 12px',
+                                    'transition: transform 0.2s, box-shadow 0.2s',
+                                ])>
                                     <div class="card-body p-3 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <span class="text-muted font-weight-bold text-uppercase small" style="font-size: 11px;">Pencapaian Omset</span>
-                                            <i class="fas fa-chart-line text-{{ $annualBreakdown['annual_sales_percent'] >= 100 ? 'success' : 'info' }}"></i>
+                                             <span class="text-muted font-weight-bold text-uppercase small" style="font-size: 11px;">Pencapaian Omset</span>
+                                             <i class="fas fa-chart-line text-{{ $annualBreakdown['annual_sales_percent'] >= 100 ? 'success' : 'info' }}"></i>
                                         </div>
                                         <div class="my-1">
-                                            <div class="font-weight-bold text-{{ $annualBreakdown['annual_sales_percent'] >= 100 ? 'success' : 'info' }}" style="font-size: 1.4rem; line-height: 1.2;">
-                                                {{ number_format($annualBreakdown['annual_sales_percent'], 1, ',', '.') }}%
-                                            </div>
+                                             <div class="font-weight-bold text-{{ $annualBreakdown['annual_sales_percent'] >= 100 ? 'success' : 'info' }}" style="font-size: 1.4rem; line-height: 1.2;">
+                                                 {{ number_format($annualBreakdown['annual_sales_percent'], 1, ',', '.') }}%
+                                             </div>
                                         </div>
                                         <div class="progress mt-1" style="height: 5px; border-radius: 3px; background-color: #e9ecef;">
-                                            <div class="progress-bar bg-{{ $annualBreakdown['annual_sales_percent'] >= 100 ? 'success' : 'info' }}" role="progressbar" style="width: {{ min($annualBreakdown['annual_sales_percent'], 100) }}%;"></div>
+                                             <div class="progress-bar bg-{{ $annualBreakdown['annual_sales_percent'] >= 100 ? 'success' : 'info' }}" role="progressbar" @style(['width: ' . min($annualBreakdown['annual_sales_percent'], 100) . '%'])></div>
                                         </div>
                                     </div>
                                 </div>
@@ -452,7 +453,7 @@
 
                             <!-- Target Cup -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 3px solid #6c757d !important; border-radius: 8px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #6c757d !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-3 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="font-size: 11px;">Target Cup</span>
@@ -470,7 +471,7 @@
 
                             <!-- Cup Terjual -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 3px solid #28a745 !important; border-radius: 8px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #28a745 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-3 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="font-size: 11px;">Cup Terjual</span>
@@ -483,9 +484,9 @@
                                         </div>
                                         <div class="text-muted small" style="font-size: 11.5px;">
                                             @if($annualBreakdown['annual_cups_target'] > 0)
-                                                {{ number_format(($annualBreakdown['annual_cups_actual'] / $annualBreakdown['annual_cups_target']) * 100, 1, ',', '.') }}% dari target
+                                                 {{ number_format(($annualBreakdown['annual_cups_actual'] / $annualBreakdown['annual_cups_target']) * 100, 1, ',', '.') }}% dari target
                                             @else
-                                                Realisasi cup terjual
+                                                 Realisasi cup terjual
                                             @endif
                                         </div>
                                     </div>
@@ -494,7 +495,7 @@
 
                             <!-- Sisa Target -->
                             <div class="col-12 col-sm-6 col-lg-4 mb-3">
-                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 3px solid #dc3545 !important; border-radius: 8px;">
+                                <div class="card h-100 mb-0 shadow-sm" style="border: 1px solid #e9ecef; border-top: 4px solid #dc3545 !important; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;">
                                     <div class="card-body p-3 d-flex flex-column justify-content-between">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <span class="text-muted font-weight-bold text-uppercase small" style="font-size: 11px;">Sisa Target</span>
@@ -541,7 +542,7 @@
                                                 <td class="py-2">Rp{{ number_format($m['target_sales'], 0, ',', '.') }}</td>
                                                 <td class="font-weight-bold py-2" style="color: #13295C;">Rp{{ number_format($m['actual_sales'], 0, ',', '.') }}</td>
                                                 <td class="py-2">
-                                                    <span class="badge badge-{{ $m['sales_achievement_percent'] >= 100 ? 'success' : ($m['sales_achievement_percent'] >= 75 ? 'primary' : ($m['sales_achievement_percent'] >= 50 ? 'warning' : 'light')) }}" style="{{ $m['sales_achievement_percent'] >= 75 && $m['sales_achievement_percent'] < 100 ? 'background-color: #13295C;' : '' }}">
+                                                    <span class="badge badge-{{ $m['sales_achievement_percent'] >= 100 ? 'success' : ($m['sales_achievement_percent'] >= 75 ? 'primary' : ($m['sales_achievement_percent'] >= 50 ? 'warning' : 'light')) }}" @style(['background-color: #13295C;' => $m['sales_achievement_percent'] >= 75 && $m['sales_achievement_percent'] < 100])>
                                                         {{ number_format($m['sales_achievement_percent'], 1, ',', '.') }}%
                                                     </span>
                                                 </td>
