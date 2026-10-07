@@ -55,14 +55,33 @@ class Kasir extends Component
         $availableYears = array_unique(array_merge($existingYears, $baseYears));
         sort($availableYears);
 
+        // Recent transactions for overview (excluding void/canceled transactions)
+        $recentTransactions = Shopping::validSales()
+            ->with(['user', 'details'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('livewire.dashboard.kasir', [
             'countCategory' => Category::count(),
             'countProductReady' => Product::count(),
             'totalStockReady' => 0,
-            'countProductSold' => ShoppingDetail::whereBetween('created_at', [$startOfPeriod, $endOfPeriod])->sum('qty'),
-            'countRevenue' => Shopping::whereBetween('created_at', [$startOfPeriod, $endOfPeriod])->sum('total_price'),
-            'revenueOffline' => Shopping::whereBetween('created_at', [$startOfPeriod, $endOfPeriod])->where(function($q) { $q->where('sales_type', 'offline')->orWhereNull('sales_type'); })->sum('total_price'),
-            'revenueOnline' => Shopping::whereBetween('created_at', [$startOfPeriod, $endOfPeriod])->where('sales_type', 'online')->sum('total_price'),
+            'countProductSold' => ShoppingDetail::whereHas('shopping', function ($q) use ($startOfPeriod, $endOfPeriod) {
+                $q->validSales()->whereBetween('created_at', [$startOfPeriod, $endOfPeriod]);
+            })->sum('qty'),
+            'countRevenue' => Shopping::validSales()
+                ->whereBetween('created_at', [$startOfPeriod, $endOfPeriod])
+                ->sum('total_price'),
+            'revenueOffline' => Shopping::validSales()
+                ->whereBetween('created_at', [$startOfPeriod, $endOfPeriod])
+                ->where(function ($q) {
+                    $q->where('sales_type', 'offline')->orWhereNull('sales_type');
+                })
+                ->sum('total_price'),
+            'revenueOnline' => Shopping::validSales()
+                ->whereBetween('created_at', [$startOfPeriod, $endOfPeriod])
+                ->where('sales_type', 'online')
+                ->sum('total_price'),
             'currentMonth' => $isCurrentYear ? Carbon::now()->locale('id')->translatedFormat('F Y') : "Tahun $year",
             'targetMonthly' => $targetMonthly,
             'totalActiveLabor' => $totalActiveLabor,
@@ -73,6 +92,7 @@ class Kasir extends Component
             'selectedYear' => $year,
             'annualBreakdown' => $breakdown,
             'availableYears' => $availableYears,
+            'recentTransactions' => $recentTransactions,
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,    
             'content' => $this->content, 

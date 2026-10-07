@@ -5,6 +5,7 @@ namespace App\Livewire\Operational;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\HppService;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,8 +15,20 @@ class HppProduct extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    public $subpage = 'HPP & Analisis Margin Produk';
-    public $content = 'Rincian HPP Total, Margin Penjualan & Target Margin Produk';
+    public $title = 'Dashboard';
+    public $subpage = 'HPP & Margin Produk';
+    public $linkTitle;
+    public $linkSubpage;
+    public $content = 'View Data HPP Produk';
+
+    public function mount()
+    {
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = 'HPP & Margin Produk';
+        $this->linkSubpage = route('kasir.hpp-product');
+        $this->content = 'View Data HPP Produk';
+    }
 
     public $search = '';
     public $selectedCategoryId = '';

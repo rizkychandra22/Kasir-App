@@ -14,14 +14,26 @@ class DataLabor extends Component
 
     protected $paginationTheme = 'bootstrap';
 
+    public $title = 'Dashboard';
     public $subpage = 'Data Tenaga Kerja';
-    public $content = 'Kelola Gaji Tenaga Kerja & Alokasi Biaya Labor per Cup';
+    public $linkTitle;
+    public $linkSubpage;
+    public $content = 'View Data Posisi Kerja';
 
     public $laborId;
     public $name;
     public $monthly_salary;
     public $status = 'active';
     public $notes;
+
+    public function mount()
+    {
+        $isAdmin = Auth::user()->role == 'Admin';
+        $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
+        $this->subpage = 'Data Tenaga Kerja';
+        $this->linkSubpage = route('kasir.labor');
+        $this->content = 'View Data Posisi Kerja';
+    }
 
     public $isEdit = false;
     public $search = '';

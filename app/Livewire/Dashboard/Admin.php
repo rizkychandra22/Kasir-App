@@ -3,6 +3,9 @@
 namespace App\Livewire\Dashboard;
 
 use App\Models\Bahan;
+use App\Models\Category;
+use App\Models\Labor;
+use App\Models\Overhead;
 use App\Models\Product;
 use App\Models\Shopping;
 use App\Models\ShoppingDetail;
@@ -17,10 +20,10 @@ class Admin extends Component
     public $subpage = 'Dashboard';
     public $content = 'Overview Admin';
     public $linkSubpage;
+    public $selectedYear;
 
     // Filters
     public $selectedPeriod = 'today'; // 'today', 'week', 'month', 'year'
-    public $selectedYear;
 
     public function mount()
     {
@@ -226,6 +229,50 @@ class Admin extends Component
             ],
         ];
 
+        // 7. Operational & Year Period Metrics (Labor, Overhead, Categories, Products, and Recent Valid Transactions)
+        $isCurrentYear = ($year === (int)date('Y'));
+        $startOfPeriod = $isCurrentYear ? Carbon::now()->startOfMonth() : Carbon::create($year, 1, 1)->startOfDay();
+        $endOfPeriod = $isCurrentYear ? Carbon::now()->endOfMonth() : Carbon::create($year, 12, 31)->endOfDay();
+
+        $targetMonthly = $target->getTargetCupsMonthly();
+        $totalActiveLabor = Labor::getTotalActiveSalary();
+        $laborCostPerCup = Labor::getCostPerCup($year);
+        $totalActiveOverhead = Overhead::getTotalActiveNominal();
+        $overheadCostPerCup = Overhead::getCostPerCup($year);
+        $totalNonMaterialPerCup = Overhead::getTotalNonMaterialCostPerCup($year);
+
+        $countCategory = Category::count();
+        $countProductReady = Product::count();
+        $totalStockReady = 0;
+
+        $countProductSold = (int)ShoppingDetail::whereHas('shopping', function ($q) use ($startOfPeriod, $endOfPeriod) {
+            $q->validSales()->whereBetween('created_at', [$startOfPeriod, $endOfPeriod]);
+        })->sum('qty');
+
+        $countRevenue = (float)Shopping::validSales()
+            ->whereBetween('created_at', [$startOfPeriod, $endOfPeriod])
+            ->sum('total_price');
+
+        $revenueOffline = (float)Shopping::validSales()
+            ->whereBetween('created_at', [$startOfPeriod, $endOfPeriod])
+            ->where(function ($q) {
+                $q->where('sales_type', 'offline')->orWhereNull('sales_type');
+            })
+            ->sum('total_price');
+
+        $revenueOnline = (float)Shopping::validSales()
+            ->whereBetween('created_at', [$startOfPeriod, $endOfPeriod])
+            ->where('sales_type', 'online')
+            ->sum('total_price');
+
+        $currentMonth = $isCurrentYear ? Carbon::now()->locale('id')->translatedFormat('F Y') : "Tahun $year";
+
+        $recentTransactions = Shopping::validSales()
+            ->with(['user', 'details'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('livewire.dashboard.admin', [
             'penjualanHariIni' => $penjualanHariIni,
             'transaksiHariIni' => $transaksiHariIni,
@@ -248,9 +295,27 @@ class Admin extends Component
             'topProducts' => $topProducts,
             'materialsAttention' => $materialsAttention,
             'chartPayload' => $chartPayload,
+
+            // Operational & Incoming Metrics
+            'countCategory' => $countCategory,
+            'countProductReady' => $countProductReady,
+            'totalStockReady' => $totalStockReady,
+            'countProductSold' => $countProductSold,
+            'countRevenue' => $countRevenue,
+            'revenueOffline' => $revenueOffline,
+            'revenueOnline' => $revenueOnline,
+            'currentMonth' => $currentMonth,
+            'targetMonthly' => $targetMonthly,
+            'totalActiveLabor' => $totalActiveLabor,
+            'laborCostPerCup' => $laborCostPerCup,
+            'totalActiveOverhead' => $totalActiveOverhead,
+            'overheadCostPerCup' => $overheadCostPerCup,
+            'totalNonMaterialPerCup' => $totalNonMaterialPerCup,
+            'recentTransactions' => $recentTransactions,
         ])->layout('layouts.app', [
             'subpage' => $this->subpage,
             'content' => $this->content,
         ]);
     }
 }
+

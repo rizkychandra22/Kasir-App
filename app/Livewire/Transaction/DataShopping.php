@@ -7,7 +7,6 @@ use App\Models\BahanStockMovement;
 use App\Models\Product;
 use App\Models\Shopping;
 use App\Models\ShoppingDetail;
-use App\Services\UnitConversionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -25,17 +24,18 @@ class DataShopping extends Component
     public $selectedShopping = null;
 
     public $title = 'Dashboard';
-    public $subpage = 'Overview Kasir';
+    public $subpage = 'Data Penjualan';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Data Penjualan';
+    public $content = 'View Data Penjualan';
 
     public function mount()
     {
         $isAdmin = Auth::user()->role == 'Admin';
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
-        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
+        $this->subpage = 'Data Penjualan';
         $this->linkSubpage = route('kasir.shopping');
+        $this->content = 'View Data Penjualan';
     }
 
     public function resetInput()
@@ -144,7 +144,7 @@ class DataShopping extends Component
             return $item['price'] * $item['qty'];
         }, $this->cart));
         
-        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+        if ($this->payment_method === 'qris') {
             $this->pay = (int)$this->total_price;
             $this->change = 0;
         } else {
@@ -154,7 +154,7 @@ class DataShopping extends Component
 
     public function updatedPay()
     {
-        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+        if ($this->payment_method === 'qris') {
             $this->pay = (int)$this->total_price;
             $this->change = 0;
         } else {
@@ -166,7 +166,7 @@ class DataShopping extends Component
     {
         if (empty($this->cart)) return;
 
-        if ($this->sales_type === 'offline' && $this->payment_method === 'qris') {
+        if ($this->payment_method === 'qris') {
             $this->pay = (int)$this->total_price;
             $this->change = 0;
         }
@@ -174,6 +174,7 @@ class DataShopping extends Component
         $rules = [
             'pay' => 'required|numeric|min:' . $this->total_price,
             'sales_type' => 'required|in:online,offline',
+            'payment_method' => 'required|in:cash,qris',
         ];
 
         $messages = [];
@@ -230,7 +231,7 @@ class DataShopping extends Component
                 $shopping = Shopping::create([
                     'invoice' => $invoice,
                     'sales_type' => $this->sales_type,
-                    'payment_method' => $this->sales_type === 'offline' ? $this->payment_method : 'cash',
+                    'payment_method' => $this->payment_method,
                     'user_id' => Auth::user()->id,
                     'total_price' => (int)$this->total_price,
                     'pay' => (int)$this->pay,

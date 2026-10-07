@@ -12,17 +12,22 @@ class DataCategory extends Component
     public $isEdit = false;
 
     public $title = 'Dashboard';
-    public $subpage = 'Overview Kasir';
+    public $subpage = 'Data Produk';
+    public $page = 'Kategori Produk';
+    public $content = 'View Data Kategori Produk';
     public $linkTitle;
     public $linkSubpage;
-    public $content = 'Kategori Produk';
+    public $linkPage;
 
     public function mount()
     {
         $isAdmin = Auth::user()->role == 'Admin';
         $this->linkTitle = ($isAdmin) ? route('admin.dashboard') : route('kasir.dashboard');
-        $this->subpage = ($isAdmin) ? 'Overview Admin' : 'Overview Kasir';
-        $this->linkSubpage = route('kasir.category');
+        $this->subpage = 'Data Produk';
+        $this->linkSubpage = route('kasir.product');
+        $this->page = 'Kategori Produk';
+        $this->linkPage = route('kasir.category');
+        $this->content = 'View Data Kategori Produk';
     }
 
     public function updatedName($value)

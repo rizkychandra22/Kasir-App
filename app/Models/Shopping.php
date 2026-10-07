@@ -77,13 +77,12 @@ class Shopping extends Model
      */
     public function getSalesTypeLabelAttribute(): string
     {
-        $salesType = strtolower($this->sales_type ?? 'offline');
-        if ($salesType === 'online') {
+        $salesType = strtoupper($this->sales_type ?? 'OFFLINE');
+        if ($salesType === 'ONLINE') {
             return 'ONLINE';
         }
-
         $method = strtoupper($this->payment_method ?? 'CASH');
-        return "OFFLINE ({$method})";
+        return "{$salesType} ({$method})";
     }
 
     /**
