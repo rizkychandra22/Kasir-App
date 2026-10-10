@@ -29,6 +29,11 @@ class Shopping extends Model
         return $this->hasMany(ShoppingDetail::class, 'shopping_id');
     }
 
+    public function order()
+    {
+        return $this->hasOne(Order::class, 'shopping_id');
+    }
+
     /**
      * Scope to filter out canceled/void transactions
      */

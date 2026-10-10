@@ -55,12 +55,23 @@
 <body>
     <div class="header text-center">
         <div class="dash"></div>
-        <h5 class="invoice-title font-weight-bold">STRUK PEMBELIAN</h5>
+        <h4 style="margin: 0; font-weight: bold;">BREW ISLAND COFFEE</h4>
+        <h5 class="invoice-title font-weight-bold" style="margin-top: 4px;">STRUK PEMBELIAN</h5>
         <div class="badge">{{ $data->invoice }}</div>
         <div style="font-size: 10px; margin-top: 3px; font-weight: bold;">[PENJUALAN {{ $data->sales_type_label }}]</div>
     </div>
 
     <table class="info-table">
+        @if($data->order)
+            <tr>
+                <td>Open Bill:</td>
+                <td class="text-right font-weight-bold">{{ $data->order->order_number }}</td>
+            </tr>
+            <tr>
+                <td>Nama:</td>
+                <td class="text-right font-weight-bold">{{ $data->order->customer_name }}</td>
+            </tr>
+        @endif
         <tr>
             <td>Tanggal:</td>
             <td class="text-right">{{ $data->created_at->format('d/m/Y H:i') }}</td>

@@ -17,7 +17,7 @@ class PdfController extends Controller
 {
     public function struckShopping($id)
     {
-        $data = Shopping::with(['details.product', 'user'])->findOrFail($id);
+        $data = Shopping::with(['details.product', 'user', 'order'])->findOrFail($id);
 
         $width  = 226; // 58mm
         $height = 300 + ($data->details->count() * 35);

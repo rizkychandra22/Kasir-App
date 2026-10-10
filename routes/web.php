@@ -12,6 +12,7 @@ use App\Livewire\Material\DataBahan;
 use App\Livewire\Product\DataCategory;
 use App\Livewire\Product\DataProduct;
 use App\Livewire\Transaction\DataShopping;
+use App\Livewire\Transaction\CreateShopping;
 use App\Livewire\Transaction\PreviewPrintShopping;
 use App\Livewire\Product\PreviewPrintProduct;
 use App\Livewire\Operational\TargetPenjualan;
@@ -68,6 +69,7 @@ Route::middleware(['RoleUser:Admin,Kasir'])->prefix('dashboard')->group(function
     Route::get('/kasir/product/export', PreviewPrintProduct::class)->name('kasir.product.export');
     Route::get('/kasir/category', DataCategory::class)->name('kasir.category');
     Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
+    Route::get('/kasir/shopping/create', CreateShopping::class)->name('kasir.shopping.create');
     Route::get('/kasir/shopping/export', PreviewPrintShopping::class)->name('kasir.shopping.export');
     Route::get('/profile', UserProfile::class)->name('user.profile');
 });
