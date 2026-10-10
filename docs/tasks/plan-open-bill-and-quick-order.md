@@ -1,74 +1,89 @@
 # Rencana Implementasi: Fitur Pesanan Ditangguhkan (Dine-In / Open Bill) & Bayar di Akhir
 
 ## Deskripsi Fitur
-Fitur ini menambahkan metode belanja kedua pada cafe **Brew Island**:
-1. **Metode 1 (Bayar Langsung / Quick Order)**: Pelanggan pesan, bayar langsung di kasir (Cash/QRIS), pesanan diproses, struk resmi tercetak. *(Alur ini tetap dipertahankan 100% tanpa perubahan cara kerja)*.
-2. **Metode 2 (Pesan Meja / Bayar Nanti / Open Bill)**: Pelanggan pesan kopi, makanan, dll., memilih No. Meja / No. Urut dan Nama Pemesan. Pesanan disimpan sebagai **Pesanan Aktif**.
-   - Stok bahan baku langsung terpotong saat pesanan dibuat (agar sinkron dengan bahan yang dipakai barista/dapur).
-   - Kasir mencetak **Slip Meja Sementara** yang memuat No. Meja, Nama Pemesan, dan **Katalog Produk Tersedia beserta Harganya** sebagai referensi pelanggan jika ingin memesan menu tambahan selama nongkrong.
+Fitur ini menambahkan metode transaksi kedua pada cafe **Brew Island**:
+1. **Metode 1 (Quick Order / Bayar Langsung)**: Pelanggan pesan menu, langsung bayar di kasir (Cash/QRIS), pesanan diproses, struk kasir resmi tercetak.
+2. **Metode 2 (Open Bill / Pesan Meja / Bayar Nanti)**: Pelanggan pesan menu awal, memilih No. Meja/No. Urut dan Nama Pemesan. Pesanan disimpan sebagai **Pesanan Aktif**.
+   - Stok bahan baku langsung terpotong saat pesanan dibuat (agar sinkron dengan bahan yang dipakai barista/dapur secara real-time).
+   - Kasir mencetak **Slip Meja Sementara** yang memuat No. Meja, Nama Pemesan, Brand Brew Island, dan **Katalog Produk Tersedia beserta Harganya** sebagai referensi pelanggan jika ingin memesan menu tambahan selama nongkrong.
    - Pelanggan dapat menambah pesanan kapan saja (**Add-on Order**).
-   - Saat hendak pulang, kasir melakukan **Pelunasan (Checkout)**, menginput pembayaran Cash/QRIS, pesanan otomatis dikonversi menjadi data penjualan resmi (**`shoppings`**), dan Struk Pembayaran Kasir resmi dicetak.
+   - Saat hendak pulang/selesai nongkrong, kasir melakukan **Pelunasan (Checkout)**, menginput pembayaran Cash/QRIS, pesanan otomatis dikonversi menjadi data penjualan resmi (**`shoppings`**), dan Struk Pembayaran Kasir resmi dicetak.
 
 ---
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Keputusan Desain Utama yang Telah Disepakati Bersama User:**
-> 1. **Satu Pintu Navigasi di Data Penjualan**: Tidak membuat menu navigasi baru di sidebar. Halaman Data Penjualan akan memiliki Tab:
->    - **Riwayat Penjualan** (Transaksi Selesai)
->    - **Pesanan Meja Aktif** (dengan badge counter meja yang sedang nongkrong).
-> 2. **Skema Database Tabel Terpisah**: Dibuat tabel baru `orders` & `order_details` khusus untuk pesanan aktif cafe. Saat pelunasan di akhir, data ini dikonversikan ke tabel penjualan `shoppings` & `shopping_details`.
-> 3. **Pemotongan Stok Bahan Baku**: Stok bahan baku langsung dipotong saat pesanan disimpan ke meja (dan saat ada menu tambahan), agar data stok bahan di dapur/bar real-time.
-> 4. **Slip Meja Sementara**: Memuat identitas meja & pemesan, serta **daftar katalog produk tersedia & harga** sebagai referensi pelanggan untuk pesan lagi.
+> **Keputusan Desain & Perubahan Alur yang Telah Disepakati:**
+> 1. **Transaksi Baru Menggunakan Halaman Khusus (Bukan Modal Pop-up)**:
+>    - Tombol "Transaksi Baru" di halaman *Data Penjualan* akan mengarahkan ke halaman baru: `/kasir/shopping/create` (Komponen Livewire `CreateShopping`).
+>    - **Alasan**: Mencegah insiden modal tertutup secara tidak sengaja saat kasir mengklik di luar modal (backdrop click) yang dapat menghilangkan keranjang input, serta memberikan area kerja yang luas, nyaman, dan leluasa bagi kasir.
+>    - Tampilan halaman ini mengadopsi layout sistem Stisla yang sudah ada, dengan card kerja yang terstruktur rapi.
+> 2. **Tab Pilihan Mode Transaksi di Halaman Transaksi Baru**:
+>    - Di bagian atas halaman `CreateShopping`, kasir dapat memilih dengan jelas antara:
+>      - **Tab 1: ⚡ Quick Order (Bayar Langsung di Tempat)**
+>      - **Tab 2: 🍽️ Open Bill (Pesan Meja / Bayar Nanti)**
+> 3. **Skema Database Tabel Terpisah**: Dibuat tabel baru `orders` & `order_details` khusus untuk pesanan aktif cafe. Saat pelunasan di kasir, data ini dikonversikan ke tabel penjualan `shoppings` & `shopping_details`.
+> 4. **Pemotongan Stok Bahan Baku Real-Time**: Stok bahan baku langsung dipotong saat pesanan disimpan ke meja (dan saat ada menu tambahan), agar data stok bahan di dapur/bar real-time.
+> 5. **Slip Meja Sementara**: Memuat identitas meja & pemesan, serta **daftar katalog produk tersedia & harga** sebagai referensi pelanggan untuk memesan lagi.
 
 ---
 
-## Perubahan yang Diusulkan
+## Diagram Alur Transaksi
 
 ```mermaid
 graph TD
-    A[Modal POS / Transaksi Baru] --> B{Pilih Metode Transaksi}
-    B -->|Metode 1: Bayar Langsung| C[Input Bayar Cash/QRIS]
-    C --> D[(Tabel shoppings & shopping_details)]
-    D --> E[Potong Stok Bahan]
-    E --> F[Cetak Struk Resmi Kasir]
+    A[Halaman Data Penjualan] -->|Klik Transaksi Baru| B[Halaman Baru: CreateShopping]
+    
+    B --> C{Pilih Tab Mode Transaksi}
+    
+    C -->|Tab: Quick Order| D[Pilih Produk & Keranjang]
+    D --> E[Pilih Metode Bayar Cash/QRIS]
+    E --> F[Input Uang Bayar & Validasi Kembalian]
+    F --> G[(Simpan ke shoppings & shopping_details)]
+    G --> H[Potong Stok Bahan Real-time]
+    H --> I[Cetak Struk Resmi Kasir]
+    I --> J[Kembali ke Data Penjualan]
 
-    B -->|Metode 2: Simpan Meja / Bayar Nanti| G[Input No Meja & Nama Pemesan]
-    G --> H[(Tabel orders & order_details)]
-    H --> I[Potong Stok Bahan Real-time]
-    I --> J[Cetak Slip Meja + Katalog Menu]
-    J --> K[Tab 'Pesanan Meja Aktif' di Data Penjualan]
+    C -->|Tab: Open Bill| K[Input No. Meja & Nama Pemesan]
+    K --> L[Pilih Produk & Keranjang]
+    L --> M[(Simpan ke orders & order_details)]
+    M --> N[Potong Stok Bahan Real-time]
+    N --> O[Cetak Slip Meja + Katalog Menu]
+    O --> P[Kembali ke Data Penjualan: Tab Pesanan Aktif]
 
-    K -->|Pelanggan Mau Tambah Menu| L[Aksi: + Tambah Menu]
-    L --> M[Update order_details & Potong Stok Bahan Tambahan]
-    M --> K
+    P -->|Pelanggan Mau Tambah Menu| Q[Aksi: + Tambah Menu]
+    Q --> R[Input Produk Tambahan & Potong Bahan Baru]
+    R --> P
 
-    K -->|Pelanggan Selesai & Menuju Kasir| N[Aksi: 💳 Pelunasan / Checkout]
-    N --> O[Pilih Cash/QRIS & Input Uang Bayar]
-    O --> P[(Konversi ke shoppings & shopping_details)]
-    P --> Q[Update status order: paid]
-    Q --> R[Cetak Struk Resmi Kasir Selesai]
+    P -->|Pelanggan Selesai & Menuju Kasir| S[Aksi: 💳 Pelunasan / Checkout]
+    S --> T[Buka Pelunasan: Cash/QRIS & Uang Bayar]
+    T --> U[(Konversi ke shoppings & shopping_details)]
+    U --> V[Update status order: paid]
+    V --> W[Cetak Struk Resmi Kasir]
+    W --> A
 ```
 
 ---
 
+## Rincian Perubahan Teknis
+
 ### 1. Database & Migrations
 
-#### [NEW] `database/migrations/xxxx_xx_xx_create_orders_table.php`
+#### [NEW] `database/migrations/2026_01_17_100000_create_orders_table.php`
 - Membuat tabel `orders`:
   - `id` (bigIncrements)
   - `order_code` (string, unique) -> e.g. `ORD-20261010-0001`
   - `table_number` (string) -> e.g. "Meja 05" atau "05"
   - `customer_name` (string) -> e.g. "Budi"
-  - `user_id` (foreignId to `users`) -> Kasir yang menginput
-  - `shopping_id` (foreignId to `shoppings`, nullable) -> Diisi saat pelunasan
+  - `user_id` (foreignId to `users`) -> Kasir yang melayani
+  - `shopping_id` (foreignId to `shoppings`, nullable) -> Diisi saat transaksi dilunasi
   - `total_price` (bigInteger)
-  - `status` (enum: `'pending'`, `'paid'`, `'canceled'`) -> Default `'pending'`
+  - `status` (enum/string: `'pending'`, `'paid'`, `'canceled'`) -> Default `'pending'`
   - `notes` (text, nullable)
   - `timestamps`
 
-#### [NEW] `database/migrations/xxxx_xx_xx_create_order_details_table.php`
+#### [NEW] `database/migrations/2026_01_17_100001_create_order_details_table.php`
 - Membuat tabel `order_details`:
   - `id` (bigIncrements)
   - `order_id` (foreignId to `orders`, cascade on delete)
@@ -76,7 +91,7 @@ graph TD
   - `qty` (integer)
   - `price` (bigInteger)
   - `subtotal` (bigInteger)
-  - `material_cost` (decimal 12,2) -> Snapshot HPP bahan
+  - `material_cost` (decimal 12,2) -> Snapshot HPP bahan baku
   - `timestamps`
 
 ---
@@ -84,11 +99,13 @@ graph TD
 ### 2. Eloquent Models
 
 #### [NEW] [Order.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Models/Order.php)
-- Definisi fillable, relasi `details()`, `user()`, `shopping()`.
-- Scope `scopePending($query)` untuk memfilter pesanan yang masih aktif di meja.
+- Fillable: `order_code`, `table_number`, `customer_name`, `user_id`, `shopping_id`, `total_price`, `status`, `notes`.
+- Relasi: `user()`, `shopping()`, `details()`.
+- Scopes: `scopePending($query)`, `scopePaid($query)`, `scopeCanceled($query)`.
 
 #### [NEW] [OrderDetail.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Models/OrderDetail.php)
-- Definisi fillable, relasi `order()`, `product()`.
+- Fillable: `order_id`, `product_id`, `qty`, `price`, `subtotal`, `material_cost`.
+- Relasi: `order()`, `product()`.
 
 #### [MODIFY] [Shopping.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Models/Shopping.php)
 - Tambahkan relasi `order()`:
@@ -101,89 +118,158 @@ graph TD
 
 ---
 
-### 3. Livewire Component Logic
+### 3. Routing (`routes/web.php`)
 
-#### [MODIFY] [DataShopping.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Livewire/Transaction/DataShopping.php)
-- **State Properties Baru**:
-  - `public $activeTab = 'completed';` // `'completed'` (Data Penjualan Selesai) atau `'active_orders'` (Pesanan Meja Aktif)
-  - `public $order_mode = 'direct';` // `'direct'` (Bayar Langsung) atau `'dine_in'` (Pesan Meja / Bayar Nanti)
-  - `public $table_number = '';`
-  - `public $customer_name = '';`
-  - `public $selectedOrderId = null;` // Untuk pelunasan / tambah menu
-  - `public $orderToPay = null;`
-- **Method Baru**:
-  - `storeOrderDineIn()`:
-    1. Validasi `table_number`, `customer_name`, keranjang tidak boleh kosong.
-    2. Validasi stok bahan baku mencukupi.
-    3. Generate `order_code` unik.
-    4. Buat record `Order` & `OrderDetail`.
-    5. Potong stok bahan baku secara real-time (`BahanStockMovement` type 'out', reference = order_code).
-    6. Buka modal cetak Slip Meja + Katalog Menu.
-  - `openAddMenuModal($orderId)`:
-    - Buka keranjang khusus untuk menambahkan menu pada pesanan meja tersebut.
-  - `saveAddMenu()`:
-    - Tambahkan item baru ke `order_details`, potong stok bahan untuk menu baru, perbarui `total_price` di `orders`.
-  - `openPayOrderModal($orderId)`:
-    - Siapkan pelunasan: muat seluruh data item dari `order_details`, hitung total tagihan, buka modal bayar (Cash/QRIS).
-  - `processOrderPayment()`:
-    - Validasi pembayaran.
-    - Buat data penjualan resmi di `shoppings` & `shopping_details`.
-    - Update `orders->status = 'paid'` & tautkan `shopping_id`.
-    - Buka cetak Struk Pembayaran Resmi.
-  - `cancelOrder($orderId)`:
-    - Kembalikan stok bahan baku yang sempat dipotong (`BahanStockMovement` type 'in', rollback).
-    - Update `orders->status = 'canceled'`.
+#### [MODIFY] [web.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/routes/web.php)
+- Tambahkan rute untuk halaman Transaksi Baru:
+  ```php
+  Route::middleware(['RoleUser:Admin,Kasir'])->prefix('dashboard')->group(function () {
+      // ... rute existing
+      Route::get('/kasir/shopping', DataShopping::class)->name('kasir.shopping');
+      Route::get('/kasir/shopping/create', CreateShopping::class)->name('kasir.shopping.create');
+      Route::get('/kasir/shopping/export', PreviewPrintShopping::class)->name('kasir.shopping.export');
+  });
+  ```
 
 ---
 
-### 4. User Interface & Blade Views
+### 4. Komponen Halaman Transaksi Baru (`CreateShopping`)
+
+#### [NEW] `app/Livewire/Transaction/CreateShopping.php`
+- **State & Properties**:
+  - `public $order_mode = 'quick';` // `'quick'` (Quick Order) atau `'open_bill'` (Open Bill Meja)
+  - `public $table_number = '';`
+  - `public $customer_name = '';`
+  - `public $sales_type = 'offline';` // `'offline'` atau `'online'`
+  - `public $cart = [];` // `productId => ['id', 'name', 'price', 'qty']`
+  - `public $payment_method = 'cash';`
+  - `public $pay = 0;`
+  - `public $total_price = 0;`
+  - `public $change = 0;`
+  - `public $qris_confirmed = false;`
+  - `public $notes = '';`
+  - `public $showSlipModal = false;`
+  - `public $createdOrder = null;`
+- **Metode Utama**:
+  - `setOrderMode($mode)`: Beralih antara tab Quick Order dan Open Bill.
+  - `addToCart($productId)`, `removeFromCart($productId)`, `updateQty($productId, $qty)`.
+  - `storeQuickOrder()`:
+    - Validasi pembayaran tunai / QRIS.
+    - Validasi stok bahan baku mencukupi.
+    - Simpan ke `shoppings` & `shopping_details`.
+    - Potong stok bahan baku secara real-time via `BahanStockMovement`.
+    - Set flash message & redirect ke `kasir.shopping` dengan instruksi cetak struk kasir.
+  - `storeOpenBill()`:
+    - Validasi: `table_number` (wajib), `customer_name` (wajib), keranjang minimal 1 item.
+    - Validasi stok bahan baku mencukupi.
+    - Buat `order_code` unik: `ORD-YYYYMMDD-XXXX`.
+    - Simpan record `Order` & `OrderDetail`.
+    - Potong stok bahan baku secara real-time via `BahanStockMovement` (notes: "Order Meja: {meja} - {nama}").
+    - Tampilkan Slip Meja Sementara (lengkap dengan katalog produk untuk pembeli) lalu redirect kembali ke `kasir.shopping` (Tab Pesanan Meja Aktif).
+
+#### [NEW] `resources/views/livewire/transaction/create-shopping.blade.php`
+- Halaman mandiri terstruktur rapi:
+  - **Header Navigasi**: Breadcrumb + Tombol `[< Kembali ke Data Penjualan]`.
+  - **Tab Switcher Besar di Atas**:
+    - Tombol Tab: `[⚡ Quick Order (Bayar Langsung)]`
+    - Tombol Tab: `[🍽️ Open Bill (Pesan Meja / Bayar Nanti)]`
+  - **Layout 2 Kolom**:
+    - **Kolom Kiri**: Katalog / Pencarian Produk (Filter kategori, search, daftar card/list produk dengan harga dan tombol tambah).
+    - **Kolom Kanan**: Panel Pesanan & Pembayaran (Form Nomor Meja & Nama Pemesan jika mode Open Bill, Daftar Keranjang, Rincian Total, Panel Metode Pembayaran jika Quick Order, dan Tombol Eksekusi Besar).
+
+---
+
+### 5. Komponen Halaman Data Penjualan (`DataShopping`)
+
+#### [MODIFY] [DataShopping.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Livewire/Transaction/DataShopping.php)
+- **State Properties**:
+  - `public $activeTab = 'completed';` // `'completed'` (Riwayat Lunas) atau `'active_orders'` (Pesanan Meja Aktif)
+  - `public $selectedOrderId = null;`
+  - `public $addonCart = [];` // Keranjang untuk penambahan menu
+  - `public $payOrderData = null;`
+- **Method Baru**:
+  - `switchTab($tab)`: Berpindah antara Riwayat Penjualan dan Pesanan Meja Aktif.
+  - `openAddMenuModal($orderId)`: Membuka dialog tambah menu untuk meja yang sedang aktif.
+  - `saveAddMenu()`:
+    - Menambahkan produk ke `order_details` meja tersebut.
+    - Memotong stok bahan baku untuk produk tambahan.
+    - Memperbarui `total_price` order meja.
+  - `openPayOrderModal($orderId)`: Menyiapkan data pelunasan order meja.
+  - `processOrderPayment()`:
+    - Validasi pembayaran pelunasan.
+    - Buat record penjualan resmi di `shoppings` & `shopping_details`.
+    - Update `orders->status = 'paid'` & `shopping_id`.
+    - Tampilkan Struk Pembayaran Kasir resmi.
+  - `cancelOrder($orderId)`:
+    - Rollback stok bahan baku yang sempat dipotong.
+    - Update `orders->status = 'canceled'`.
 
 #### [MODIFY] [data-shopping.blade.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/resources/views/livewire/transaction/data-shopping.blade.php)
-- **Header Card & Tab Navigasi**:
-  - Tab 1: **Riwayat Penjualan** (Tabel transaksi `shoppings` yang sudah berjalan saat ini).
-  - Tab 2: **Pesanan Meja Aktif** + Badge counter dinamis (misal: `<span class="badge badge-warning ml-1">{{ $activeOrdersCount }} Meja</span>`).
-- **Modal POS Baru (Fleksibel & Cepat)**:
-  - Toggle pilihan: `[⚡ Bayar Langsung (POS)]` vs `[🍽️ Pesan Meja (Bayar Nanti)]`.
-  - Jika memilih "Pesan Meja", muncul form input ringkas:
-    - No. Meja (misal: "Meja 01", "Meja 12")
-    - Nama Pemesan (misal: "Andi")
-  - Tombol simpan: `Simpan Pesanan Meja`.
-- **Tampilan Tab Pesanan Meja Aktif**:
-  - Kartu/Tabel daftar meja yang sedang nongkrong:
-    - No Meja & Nama Pelanggan
-    - Waktu Pesan (e.g. "10 menit yang lalu")
-    - Rincian item & total sementara
-    - Tombol aksi:
-      - `[+ Tambah Menu]` (hijau)
-      - `[💳 Bayar / Checkout]` (biru primer)
-      - `[👁️ Rincian]` (info)
-      - `[❌ Batalkan]` (merah)
-- **Modal Cetak Slip Meja Sementara**:
-  - Desain struk 58mm/80mm:
-    - Logo & Nama Brand: Brew Island Coffee
-    - **NOMOR MEJA** (Teks besar tebal)
-    - Nama Pelanggan & Jam Pesan
-    - Pesan: *"Pesanan Anda sedang dipersiapkan. Selamat menikmati waktu nongkrong Anda di Brew Island!"*
-    - **Daftar Menu Tersedia & Harga** (Katalog ringkas per kategori agar pelanggan mudah memilih pesanan berikutnya).
+- Ubah tombol `Transaksi Baru` dari modal trigger menjadi link halaman:
+  ```blade
+  <a href="{{ route('kasir.shopping.create') }}" class="btn btn-warning">
+      <i class="fas fa-plus-circle mr-1"></i> Transaksi Baru
+  </a>
+  ```
+- Tambahkan navigasi Tab di atas tabel:
+  - Tab 1: **Riwayat Penjualan** (Tabel transaksi `shoppings`).
+  - Tab 2: **Pesanan Meja Aktif** (Badge counter: `{{ $activeOrdersCount }} Meja`).
+- Tampilan konten Tab Pesanan Meja Aktif:
+  - Tabel daftar pesanan meja aktif:
+    - No. Meja & Nama Pemesan
+    - Jam Pesan & Durasi Nongkrong
+    - Daftar Menu Dipesan Sementara
+    - Total Tagihan Sementara
+    - Tombol Aksi:
+      - `[+ Tambah Menu]` (Hijau)
+      - `[💳 Bayar / Checkout]` (Biru Primer)
+      - `[👁️ Rincian]` (Abu-abu)
+      - `[❌ Batalkan]` (Merah)
+- Modal Pelunasan Meja (Sederhana & aman khusus untuk checkout pembayaran).
+- Modal Tambah Menu Meja (Sederhana khusus untuk add-on).
+
+---
+
+### 6. Desain Cetak Slip Meja Sementara vs Struk Kasir Resmi
+
+1. **Slip Meja Sementara (Dine-in Order Slip)**:
+   - Header: Brew Island Coffee
+   - **NOMOR MEJA** (Teks besar, jelas, mudah dibaca barista & pelanggan)
+   - Nama Pemesan & Waktu Pemesanan
+   - Pesan: *"Pesanan Anda sedang disiapkan oleh Barista. Selamat menikmati waktu nongkrong di Brew Island!"*
+   - **Katalog Referensi Menu Tersedia & Harga**:
+     Daftar ringkas produk-produk cafe yang tersedia beserta harganya agar pelanggan mudah memesan lagi tanpa harus ke kasir.
+2. **Struk Pembayaran Kasir Resmi (Payment Receipt)**:
+   - Header: Brew Island Coffee & No. Invoice (`INV-YYYYMMDD...`)
+   - Tanggal & Nama Kasir
+   - No Meja & Nama Pemesan
+   - Daftar seluruh item yang dibeli (menu awal + menu tambahan) beserta subtotal
+   - Total Harga, Uang Diterima (`Pay`), Uang Kembalian (`Change`), Metode Bayar (`Cash` / `QRIS`)
+   - Footer: *"Terima kasih atas kunjungan Anda!"*
 
 ---
 
 ## Rencana Verifikasi
 
 ### Automated Tests
-- Menjalankan feature test baru:
+- Menjalankan feature test baru `tests/Feature/DineInOrderWorkflowTest.php`:
   `php artisan test --filter=DineInOrderWorkflowTest`
-  - `test_can_create_dine_in_order_with_material_deduction()`
-  - `test_can_add_menu_items_to_existing_active_order()`
-  - `test_can_pay_and_convert_order_to_shopping_transaction()`
-  - `test_canceled_order_restores_material_stock()`
-  - `test_direct_payment_remains_fully_functional()`
+  - `test_can_access_create_shopping_page()`
+  - `test_can_create_quick_order_transaction()`
+  - `test_can_create_open_bill_dine_in_order_with_material_deduction()`
+  - `test_can_add_menu_to_active_open_bill_order()`
+  - `test_can_pay_and_convert_open_bill_to_shopping_transaction()`
+  - `test_canceling_order_restores_material_stock()`
 
 ### Manual Verification
-1. Buka menu **Data Penjualan** di browser (port 5000).
-2. Lakukan transaksi langsung (Metode 1) -> Pastikan tetap lancar tanpa kendala.
-3. Buka transaksi baru, pilih **Pesan Meja (Bayar Nanti)** (Metode 2) -> Input No Meja "Meja 07", Nama "Budi", pilih 2 produk -> Simpan.
-4. Cek Slip Meja yang muncul -> Pastikan ada No Meja, Nama, dan referensi daftar produk tersedia.
-5. Cek Tab **Pesanan Meja Aktif** -> Pastikan Meja 07 muncul di daftar.
-6. Klik **Tambah Menu** -> Tambahkan 1 camilan -> Pastikan total tagihan bertambah dan stok bahan berkurang.
-7. Klik **Bayar / Checkout** -> Masukkan pembayaran Cash -> Selesaikan -> Pastikan transaksi berpindah ke Riwayat Penjualan dan Struk Resmi Kasir tercetak.
+1. Buka browser di port 5000: Menu **Data Penjualan**.
+2. Klik tombol **Transaksi Baru** -> Pastikan membuka halaman baru `/kasir/shopping/create` secara mulus tanpa modal.
+3. Uji **Tab Quick Order**: Pilih produk, pilih Cash, masukkan nominal bayar, klik simpan -> Pastikan struk resmi tercetak dan transaksi masuk ke tabel Data Penjualan.
+4. Klik **Transaksi Baru** lagi, pilih **Tab Open Bill**:
+   - Masukkan No Meja "Meja 03", Nama "Budi".
+   - Pilih produk -> Klik Simpan Pesanan Meja.
+   - Cek Slip Meja yang muncul (pastikan ada No Meja, Nama, dan referensi daftar produk).
+   - Pastikan diarahkan kembali ke Data Penjualan di Tab **Pesanan Meja Aktif**.
+5. Di Tab Pesanan Meja Aktif:
+   - Klik **+ Tambah Menu** pada Meja 03 -> Tambahkan 1 produk baru -> Pastikan total bertambah dan stok bahan terpotong.
+   - Klik **Bayar / Checkout** -> Masukkan uang pembayaran -> Selesaikan -> Pastikan pesanan berpindah ke Riwayat Penjualan lunas dan Struk Kasir Resmi dicetak.
