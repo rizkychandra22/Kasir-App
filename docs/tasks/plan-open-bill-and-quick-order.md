@@ -79,7 +79,7 @@ graph TD
   - `user_id` (foreignId to `users`) -> Kasir yang melayani
   - `shopping_id` (foreignId to `shoppings`, nullable) -> Diisi saat transaksi dilunasi
   - `total_price` (bigInteger)
-  - `status` (enum/string: `'pending'`, `'paid'`, `'canceled'`) -> Default `'pending'`
+  - `status` (enum/string: `'pending'`, `'paid'`) -> Default `'pending'` (Tidak ada status canceled untuk mencegah penggelapan/fraud kasir)
   - `notes` (text, nullable)
   - `timestamps`
 
@@ -101,7 +101,7 @@ graph TD
 #### [NEW] app/Models/Order.php
 - Fillable: `order_code`, `table_number`, `customer_name`, `user_id`, `shopping_id`, `total_price`, `status`, `notes`.
 - Relasi: `user()`, `shopping()`, `details()`.
-- Scopes: `scopePending($query)`, `scopePaid($query)`, `scopeCanceled($query)`.
+- Scopes: `scopePending($query)`, `scopePaid($query)`.
 
 #### [NEW] app/Models/OrderDetail.php
 - Fillable: `order_id`, `product_id`, `qty`, `price`, `subtotal`, `material_cost`.
@@ -183,12 +183,13 @@ graph TD
 
 #### [MODIFY] app/Livewire/Transaction/DataShopping.php
 - **State Properties**:
-  - `public $activeTab = 'completed';` // `'completed'` (Riwayat Lunas) atau `'active_orders'` (Pesanan Meja Aktif)
+  - `public $activeTab = 'active_orders';` // Default langsung aktif di Tab 1: Pesanan Meja Aktif
+  - `public $orderFilterPeriod = 'today';` // Filter periode: 'today' (Hari Ini), '7_days' (7 Hari Lalu), '30_days' (30 Hari Lalu), 'all' (Semua Open Bill)
   - `public $selectedOrderId = null;`
   - `public $addonCart = [];` // Keranjang untuk penambahan menu
   - `public $payOrderData = null;`
 - **Method Baru**:
-  - `switchTab($tab)`: Berpindah antara Riwayat Penjualan dan Pesanan Meja Aktif.
+  - `switchTab($tab)`: Berpindah antara Tab 1 (Pesanan Meja Aktif) dan Tab 2 (Data Penjualan).
   - `openAddMenuModal($orderId)`: Membuka dialog tambah menu untuk meja yang sedang aktif.
   - `saveAddMenu()`:
     - Menambahkan produk ke `order_details` meja tersebut.
@@ -200,9 +201,7 @@ graph TD
     - Buat record penjualan resmi di `shoppings` & `shopping_details`.
     - Update `orders->status = 'paid'` & `shopping_id`.
     - Tampilkan Struk Pembayaran Kasir resmi.
-  - `cancelOrder($orderId)`:
-    - Rollback stok bahan baku yang sempat dipotong.
-    - Update `orders->status = 'canceled'`.
+  > **Catatan Keamanan & Anti-Fraud**: Tidak disediakan aksi `cancelOrder` (batalkan). Semua pesanan yang sudah dibuat dan bahan bakunya terpotong wajib diselesaikan melalui proses pembayaran agar tidak ada celah penggelapan dana oleh kasir.
 
 #### [MODIFY] resources/views/livewire/transaction/data-shopping.blade.php
 - Ubah tombol `Transaksi Baru` dari modal trigger menjadi link halaman:
@@ -212,19 +211,31 @@ graph TD
   </a>
   ```
 - Tambahkan navigasi Tab di atas tabel:
-  - Tab 1: **Riwayat Penjualan** (Tabel transaksi `shoppings`).
-  - Tab 2: **Pesanan Meja Aktif** (Badge counter: `{{ $activeOrdersCount }} Meja`).
-- Tampilan konten Tab Pesanan Meja Aktif:
-  - Tabel daftar pesanan meja aktif:
-    - No. Meja & Nama Pemesan
-    - Jam Pesan & Durasi Nongkrong
-    - Daftar Menu Dipesan Sementara
-    - Total Tagihan Sementara
-    - Tombol Aksi:
-      - `[+ Tambah Menu]` (Hijau)
-      - `[💳 Bayar / Checkout]` (Biru Primer)
-      - `[👁️ Rincian]` (Abu-abu)
-      - `[❌ Batalkan]` (Merah)
+  - **Tab 1: Pesanan Meja Aktif** (Default Aktif, dengan badge counter `{{ $activeOrdersCount }} Meja`).
+  - **Tab 2: Data Penjualan** (Tabel riwayat penjualan yang sudah ada saat ini).
+- **Tampilan Konten Tab 1 (Pesanan Meja Aktif)**:
+  - **Filter Periode Dropdown** (`wire:model.live="orderFilterPeriod"`):
+    - Opsi:
+      - `Hari Ini` (Default)
+      - `7 Hari Lalu`
+      - `30 Hari Lalu`
+      - `Semua Open Bill`
+  - Tabel daftar pesanan meja yang belum lunas:
+    - `#` (Nomor urut)
+    - `No. Meja`
+    - `Nama Pemesan`
+    - `Waktu Pesan` (Format tanggal & jam pemesanan)
+    - `Total Tagihan Sementara`
+    - `Aksi`:
+      - `[+ Tambah Menu]` (btn-success - untuk pelanggan yang ingin menambah pesanan)
+      - `[💳 Bayar / Checkout]` (btn-primary - untuk proses pelunasan di kasir)
+      - `[👁️ Rincian]` (btn-info - melihat rincian item pesanan)
+    - Jika kosong: *"Tidak ada pesanan meja aktif saat ini."*
+- **Tampilan Konten Tab 2 (Data Penjualan)**:
+  - Mempertahankan tabel transaksi penjualan yang saat ini sudah ada:
+    - Kolom: `#`, `No. Invoice`, `Tipe Penjualan`, `Tanggal`, `Kasir`, `Total`, `Bayar`, `Kembalian`, `Aksi`
+    - Jika kosong: *"Belum ada transaksi."*
+    - Fitur filter & pagination existing tetap berfungsi normal.
 - Modal Pelunasan Meja (Sederhana & aman khusus untuk checkout pembayaran).
 - Modal Tambah Menu Meja (Sederhana khusus untuk add-on).
 
@@ -259,7 +270,6 @@ graph TD
   - `test_can_create_open_bill_dine_in_order_with_material_deduction()`
   - `test_can_add_menu_to_active_open_bill_order()`
   - `test_can_pay_and_convert_open_bill_to_shopping_transaction()`
-  - `test_canceling_order_restores_material_stock()`
 
 ### Manual Verification
 1. Buka browser di port 5000: Menu **Data Penjualan**.
