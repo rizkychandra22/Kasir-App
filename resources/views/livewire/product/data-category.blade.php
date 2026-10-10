@@ -36,9 +36,6 @@
                                 <a href="{{ route('kasir.product') }}" class="btn btn-warning">
                                     <i class="fas fa-arrow-left mr-1"></i> Produk
                                 </a>
-                                <a href="" class="btn btn-success">
-                                    <i class="fas fa-file-export mr-1"></i> Export
-                                </a>
                             </div>
                         </div>
                     </div>
