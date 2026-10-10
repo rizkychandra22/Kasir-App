@@ -98,16 +98,16 @@ graph TD
 
 ### 2. Eloquent Models
 
-#### [NEW] [Order.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Models/Order.php)
+#### [NEW] app/Models/Order.php
 - Fillable: `order_code`, `table_number`, `customer_name`, `user_id`, `shopping_id`, `total_price`, `status`, `notes`.
 - Relasi: `user()`, `shopping()`, `details()`.
 - Scopes: `scopePending($query)`, `scopePaid($query)`, `scopeCanceled($query)`.
 
-#### [NEW] [OrderDetail.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Models/OrderDetail.php)
+#### [NEW] app/Models/OrderDetail.php
 - Fillable: `order_id`, `product_id`, `qty`, `price`, `subtotal`, `material_cost`.
 - Relasi: `order()`, `product()`.
 
-#### [MODIFY] [Shopping.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Models/Shopping.php)
+#### [MODIFY] app/Models/Shopping.php
 - Tambahkan relasi `order()`:
   ```php
   public function order()
@@ -120,7 +120,7 @@ graph TD
 
 ### 3. Routing (`routes/web.php`)
 
-#### [MODIFY] [web.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/routes/web.php)
+#### [MODIFY] routes/web.php
 - Tambahkan rute untuk halaman Transaksi Baru:
   ```php
   Route::middleware(['RoleUser:Admin,Kasir'])->prefix('dashboard')->group(function () {
@@ -181,7 +181,7 @@ graph TD
 
 ### 5. Komponen Halaman Data Penjualan (`DataShopping`)
 
-#### [MODIFY] [DataShopping.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/app/Livewire/Transaction/DataShopping.php)
+#### [MODIFY] app/Livewire/Transaction/DataShopping.php
 - **State Properties**:
   - `public $activeTab = 'completed';` // `'completed'` (Riwayat Lunas) atau `'active_orders'` (Pesanan Meja Aktif)
   - `public $selectedOrderId = null;`
@@ -204,7 +204,7 @@ graph TD
     - Rollback stok bahan baku yang sempat dipotong.
     - Update `orders->status = 'canceled'`.
 
-#### [MODIFY] [data-shopping.blade.php](file:///d:/%21%60Learn-Programmer%60/KasirApp/resources/views/livewire/transaction/data-shopping.blade.php)
+#### [MODIFY] resources/views/livewire/transaction/data-shopping.blade.php
 - Ubah tombol `Transaksi Baru` dari modal trigger menjadi link halaman:
   ```blade
   <a href="{{ route('kasir.shopping.create') }}" class="btn btn-warning">
